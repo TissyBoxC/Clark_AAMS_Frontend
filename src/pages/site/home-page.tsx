@@ -13,7 +13,7 @@ function HomePage() {
   usePageMeta('Clark AAMS 官网', 'Clark AAMS 提供课表导入、截图识别与取件码回查。');
 
   const isLoggedIn = isAuthResolved && user.id > 0;
-  const userHref = isLoggedIn ? '/user' : '/auth/login';
+  const userHref = isLoggedIn ? '/user' : '/login';
   const registerHref = isLoggedIn ? '/user' : '/auth/register';
   const userLabel = isLoggedIn ? user.username || user.email || '已登录' : '立即登录';
   const userAvatarUrl = isLoggedIn ? qqAvatarUrl(user.email) : '/site/logo.png';

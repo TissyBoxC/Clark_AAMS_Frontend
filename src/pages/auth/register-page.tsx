@@ -190,7 +190,7 @@ function RegisterPage() {
 
             <div className='auth-scene-actions'>
               <div className='auth-scene-link-row'>
-                <a className='auth-scene-link' href={`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`}>
+                <a className='auth-scene-link' href={`/login?redirect=${encodeURIComponent(redirectUrl)}`}>
                   返回登录
                 </a>
               </div>

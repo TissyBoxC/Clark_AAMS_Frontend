@@ -37,7 +37,7 @@ function GuideMenuChevron() {
 }
 
 function SiteHeader({
-  userHref = '/auth/login',
+  userHref = '/login',
   userLabel = '立即登录',
   userAvatarUrl = '/site/logo.png',
   showUserEntry = true,

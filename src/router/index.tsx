@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 
 import LoadingView from '../components/LoadingView';
+import ProtectedRoute from '../hooks/useProtectedRoute';
 import { markPageEntering } from '../utils/navigation';
 
 import { useTransitionNavigate } from '../hooks/useTransitionNavigate';
@@ -15,6 +16,7 @@ import { useTransitionNavigate } from '../hooks/useTransitionNavigate';
 const HomePage = lazy(() => import('../pages/site/home-page'));
 const ApiPage = lazy(() => import('../pages/site/api-page'));
 const LoginPage = lazy(() => import('../pages/auth/login-page'));
+const UnifiedLoginPage = lazy(() => import('../pages/auth/unified-login-page'));
 const RegisterPage = lazy(() => import('../pages/auth/register-page'));
 const VerifyPage = lazy(() => import('../pages/auth/verify-page'));
 const AdminEntryPage = lazy(() => import('../pages/admin/admin-entry-page'));
@@ -158,7 +160,14 @@ export function AppRouter() {
 
           <Route path='/auth/login' element={<LoginPage />} />
           <Route path='/auth/login.html' element={<AliasRedirect to='/auth/login' />} />
-          <Route path='/login' element={<AliasRedirect to='/auth/login' />} />
+
+          {/*
+            统一入口：按身份分流到对应用户/管理员工号台。
+            保留 /auth/login 作为用户登录的稳定地址（App 与文档里有引用），
+            但所有「去登录」的内部链接都应指向 /login。
+          */}
+          <Route path='/login' element={<UnifiedLoginPage />} />
+          <Route path='/login.html' element={<AliasRedirect to='/login' />} />
 
           <Route path='/auth/register' element={<RegisterPage />} />
           <Route path='/auth/register.html' element={<AliasRedirect to='/auth/register' />} />
@@ -168,22 +177,54 @@ export function AppRouter() {
           <Route path='/auth/verify.html' element={<AliasRedirect to='/auth/verify' />} />
           <Route path='/verify' element={<AliasRedirect to='/auth/verify' />} />
 
-          <Route path='/user' element={<UserDashboardPage />} />
+          {/*
+            用户工作台：需 user 或 admin 身份。
+            管理员也能看用户页面（便于自查），但不会被当成普通用户分流。
+          */}
+          <Route
+            path='/user'
+            element={
+              <ProtectedRoute allow={['user', 'admin']}>
+                <UserDashboardPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/user/index.html' element={<AliasRedirect to='/user' />} />
           <Route path='/user.html' element={<AliasRedirect to='/user' />} />
           <Route path='/my' element={<AliasRedirect to='/user' />} />
           <Route path='/my.html' element={<AliasRedirect to='/user' />} />
 
-          <Route path='/user/import' element={<UserImportPage />} />
+          <Route
+            path='/user/import'
+            element={
+              <ProtectedRoute allow={['user', 'admin']}>
+                <UserImportPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/user/import.html' element={<AliasRedirect to='/user/import' />} />
 
-          <Route path='/user/recognition' element={<UserRecognitionPage />} />
+          <Route
+            path='/user/recognition'
+            element={
+              <ProtectedRoute allow={['user', 'admin']}>
+                <UserRecognitionPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path='/user/recognition.html'
             element={<AliasRedirect to='/user/recognition' />}
           />
 
-          <Route path='/user/pickup' element={<UserPickupPage />} />
+          <Route
+            path='/user/pickup'
+            element={
+              <ProtectedRoute allow={['user', 'admin']}>
+                <UserPickupPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/user/pickup.html' element={<AliasRedirect to='/user/pickup' />} />
 
           <Route path='/course-import' element={<CourseImportPage />} />
@@ -197,19 +238,79 @@ export function AppRouter() {
           <Route path='/admin/register' element={<AdminRegisterPage />} />
           <Route path='/admin/register.html' element={<AliasRedirect to='/admin/register' />} />
 
-          <Route path='/admin' element={<AdminEntryPage />} />
+          {/*
+            /admin 不再「盲跳」：交给守卫判断身份，
+            已登录管理员刷新该页直接进后台，不会再被踢回登录页
+            （审查文档 P1 第 5 项记录的正是这个问题）。
+          */}
+          <Route
+            path='/admin'
+            element={
+              <ProtectedRoute allow={['admin']}>
+                <AdminEntryPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/admin/index.html' element={<AliasRedirect to='/admin' />} />
-          <Route path='/admin/dashboard' element={<AdminDashboardPage />} />
+
+          <Route
+            path='/admin/dashboard'
+            element={
+              <ProtectedRoute allow={['admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/admin/dashboard.html' element={<AliasRedirect to='/admin/dashboard' />} />
-          <Route path='/admin/ai' element={<AdminAiPage />} />
+
+          <Route
+            path='/admin/ai'
+            element={
+              <ProtectedRoute allow={['admin']}>
+                <AdminAiPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/admin/ai.html' element={<AliasRedirect to='/admin/ai' />} />
-          <Route path='/admin/email' element={<AdminEmailPage />} />
+
+          <Route
+            path='/admin/email'
+            element={
+              <ProtectedRoute allow={['admin']}>
+                <AdminEmailPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/admin/email.html' element={<AliasRedirect to='/admin/email' />} />
-          <Route path='/admin/schools' element={<AdminSchoolsPage />} />
+
+          <Route
+            path='/admin/schools'
+            element={
+              <ProtectedRoute allow={['admin']}>
+                <AdminSchoolsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/admin/schools.html' element={<AliasRedirect to='/admin/schools' />} />
-          <Route path='/admin/versions' element={<AdminVersionsPage />} />
+
+          <Route
+            path='/admin/versions'
+            element={
+              <ProtectedRoute allow={['admin']}>
+                <AdminVersionsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/admin/versions.html' element={<AliasRedirect to='/admin/versions' />} />
-          <Route path='/admin/pickups' element={<AdminPickupsPage />} />
+
+          <Route
+            path='/admin/pickups'
+            element={
+              <ProtectedRoute allow={['admin']}>
+                <AdminPickupsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/admin/pickups.html' element={<AliasRedirect to='/admin/pickups' />} />
 
           <Route path='*' element={<NotFoundPage />} />

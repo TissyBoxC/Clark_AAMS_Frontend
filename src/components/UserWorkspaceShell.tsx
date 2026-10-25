@@ -183,7 +183,7 @@ function UserWorkspaceShell({
     try {
       await logoutUser();
       clearUser();
-      navigate('/auth/login', {
+      navigate('/login', {
         replace: true,
       });
     } catch (error) {

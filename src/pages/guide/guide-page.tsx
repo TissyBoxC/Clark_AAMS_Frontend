@@ -43,7 +43,7 @@ function GuidePage() {
   usePageMeta(entry?.title || '用户指南', entry?.summary || 'Clark AAMS 用户指南内容页。');
 
   const isLoggedIn = isAuthResolved && user.id > 0;
-  const userHref = isLoggedIn ? '/user' : '/auth/login';
+  const userHref = isLoggedIn ? '/user' : '/login';
   const userLabel = isLoggedIn ? user.username || user.email || '已登录' : '立即登录';
   const userAvatarUrl = isLoggedIn ? qqAvatarUrl(user.email) : '/site/logo.png';
 

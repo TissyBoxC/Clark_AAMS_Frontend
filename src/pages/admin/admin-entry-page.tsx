@@ -1,81 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { fetchAdminSetupStatus } from '../../api/admin-api';
 import LoadingView from '../../components/LoadingView';
 import { useBodyClass } from '../../hooks/useBodyClass';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 
-import styles from './admin-pages.module.css';
-
+/**
+ * 后台入口 `/admin`。
+ *
+ * <p>背景（审查文档 P1 第 5 项）：此前该页会盲目判断「后台没配置就跳注册、
+ * 配置了就跳登录」，完全不看当前是否已登录。结果已登录的管理员刷新
+ * `/admin` 反而被踢回登录页。
+ *
+ * <p>现在身份校验已由外层 `ProtectedRoute allow={['admin']}` 完成——
+ * 能进到这个组件，说明已经是管理员。因此这里只剩一件事：
+ * 把入口页当作后台首页，直接送往 dashboard。
+ *
+ * 保留该路由而不是直接重定向到 `/admin/dashboard`，是为了让 `/admin`
+ * 这个短地址继续可用（文档、书签、App 里都有引用）。
+ */
 function AdminEntryPage() {
   const navigate = useTransitionNavigate();
-  const [statusMessage, setStatusMessage] = useState<string>('正在检查后台初始化状态。');
 
   useBodyClass('admin-route');
-  usePageMeta('后台入口', 'Clark AAMS 后台入口初始化检测页。');
+  usePageMeta('后台入口', 'Clark AAMS 后台入口。');
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function checkSetupStatus(): Promise<void> {
-      try {
-        const setupStatus = await fetchAdminSetupStatus();
-
-        if (!isMounted) {
-          return;
-        }
-
-        if (!setupStatus.configured && setupStatus.registrationAvailable) {
-          navigate('/admin/register', {
-            replace: true,
-            delay: 0,
-          });
-          return;
-        }
-
-        navigate('/admin/login?redirect=%2Fadmin%2Fdashboard', {
-          replace: true,
-          delay: 0,
-        });
-      } catch (error) {
-        if (isMounted) {
-          setStatusMessage(error instanceof Error ? error.message : '后台初始化状态读取失败');
-        }
-      }
-    }
-
-    void checkSetupStatus();
-
-    return () => {
-      isMounted = false;
-    };
+    navigate('/admin/dashboard', { replace: true, delay: 0 });
   }, [navigate]);
 
-  if (statusMessage === '正在检查后台初始化状态。') {
-    return <LoadingView description={statusMessage} />;
-  }
-
-  return (
-    <main className={styles.authShell}>
-      <section className={`${styles.panel} ${styles.authCard}`}>
-        <div className={styles.panelHead}>
-          <div>
-            <p className={styles.eyebrow}>Admin Setup</p>
-            <h2>后台入口检测失败</h2>
-            <p>无法读取管理员初始化状态，请确认后端服务和 `/api/v1/admin/auth/setup` 可访问。</p>
-          </div>
-        </div>
-        <div className={styles.panelBody}>
-          <div className={`${styles.statusText} ${styles.statusError}`}>{statusMessage}</div>
-          <div className={styles.actions}>
-            <a className={styles.buttonSecondary} href='/admin'>重新检测</a>
-            <a className={styles.buttonSecondary} href='/'>返回站点</a>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
+  return <LoadingView description='正在进入后台工作台。' />;
 }
 
 export default AdminEntryPage;

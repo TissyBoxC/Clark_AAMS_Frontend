@@ -27,7 +27,7 @@ export function useRequiredUser(): IRequiredUserResultType {
       `${location.pathname}${location.search}${location.hash}`,
       '/user',
     );
-    navigate(`/auth/login?redirect=${encodeURIComponent(redirect)}`, {
+    navigate(`/login?redirect=${encodeURIComponent(redirect)}`, {
       replace: true,
       delay: 0,
     });
