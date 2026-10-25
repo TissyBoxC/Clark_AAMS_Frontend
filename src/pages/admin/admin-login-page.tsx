@@ -1,0 +1,172 @@
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useLocation } from 'react-router-dom';
+
+import { adminLogin, fetchAdminSetupStatus } from '../../api/admin-api';
+import LoadingView from '../../components/LoadingView';
+import { useBodyClass } from '../../hooks/useBodyClass';
+import { usePageMeta } from '../../hooks/usePageMeta';
+import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
+import { safeRedirect } from '../../utils/navigation';
+
+import styles from './admin-pages.module.css';
+
+function AdminLoginPage() {
+  const location = useLocation();
+  const navigate = useTransitionNavigate();
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [isChecking, setIsChecking] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  useBodyClass('admin-route');
+  usePageMeta('后台登录', 'Clark AAMS 后台登录页。');
+
+  const redirectUrl = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const target = safeRedirect(params.get('redirect') ?? '/admin/dashboard', '/admin/dashboard');
+
+    return target === '/admin' ? '/admin/dashboard' : target;
+  }, [location.search]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadSetupStatus(): Promise<void> {
+      try {
+        const setupStatus = await fetchAdminSetupStatus();
+
+        if (isMounted && !setupStatus.configured && setupStatus.registrationAvailable) {
+          navigate('/admin/register', {
+            replace: true,
+            delay: 0,
+          });
+          return;
+        }
+      } catch (error) {
+        if (isMounted) {
+          setStatusMessage(error instanceof Error ? error.message : '初始化状态读取失败');
+        }
+      } finally {
+        if (isMounted) {
+          setIsChecking(false);
+        }
+      }
+    }
+
+    void loadSetupStatus();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault();
+    setStatusMessage('');
+
+    const normalizedUsername = username.trim();
+
+    if (!normalizedUsername || !password) {
+      setStatusMessage('请填写后台账号和密码。');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const loginResult = await adminLogin(normalizedUsername, password);
+
+      if (!loginResult.authenticated) {
+        setStatusMessage('登录接口返回成功，但 authenticated=false。请检查响应 JSON / Session 写入逻辑。');
+        return;
+      }
+
+      navigate(redirectUrl, {
+        replace: true,
+      });
+    } catch (error) {
+      setStatusMessage(error instanceof Error ? error.message : '登录失败');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  if (isChecking) {
+    return <LoadingView description='正在检查后台初始化状态。' />;
+  }
+
+  return (
+    <main className={styles.authShell}>
+      <div className={styles.adminAuthLayout}>
+        <aside className={`${styles.panel} ${styles.adminAuthStory}`}>
+          <a className={styles.adminAuthBrand} href='/'>
+            <img src='/site/logo.png' alt='' />
+            <span>
+              <strong>Clark AAMS</strong>
+                <small>后台运维</small>
+            </span>
+          </a>
+          <div>
+            <p className={styles.eyebrow}>安全控制台</p>
+            <h1>后台登录被设计成明确、低噪音、可恢复的运维入口。</h1>
+            <p className={styles.statusText}>这里进入学校适配器、版本策略、AI 识别和取件码记录等高风险模块，因此视觉上采用深色控制台并强化状态文案。</p>
+          </div>
+          <div className={styles.adminAuthSignals}>
+              <span>初始化检查</span>
+              <span>会话 Cookie</span>
+              <span>运维就绪</span>
+          </div>
+        </aside>
+
+        <section className={`${styles.panel} ${styles.authCard}`}>
+        <div className={styles.panelHead}>
+          <div>
+            <p className={styles.eyebrow}>后台入口</p>
+            <h2>Clark AAMS 后台登录</h2>
+            <p>登录后进入学校适配器、版本管理、AI 配置和取件码后台。</p>
+          </div>
+        </div>
+        <div className={styles.panelBody}>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <label className={styles.field}>
+              <span>账号</span>
+              <input
+                className={styles.input}
+                autoComplete='username'
+                required
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+              />
+            </label>
+            <label className={styles.field}>
+              <span>密码</span>
+              <input
+                className={styles.input}
+                type='password'
+                autoComplete='current-password'
+                required
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </label>
+            <div className={styles.actions}>
+              <button className={styles.button} type='submit' disabled={isSubmitting}>
+                {isSubmitting ? '登录中...' : '登录'}
+              </button>
+              <a className={styles.buttonSecondary} href='/'>
+                返回站点
+              </a>
+            </div>
+            <div className={`${styles.statusText} ${statusMessage ? styles.statusError : ''}`}>
+              {statusMessage || '如果系统尚未初始化，将自动跳转到管理员注册页；管理员已存在时请直接登录。'}
+            </div>
+          </form>
+        </div>
+      </section>
+      </div>
+    </main>
+  );
+}
+
+export default AdminLoginPage;
