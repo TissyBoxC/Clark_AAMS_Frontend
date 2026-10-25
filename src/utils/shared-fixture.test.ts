@@ -20,7 +20,7 @@
  *
  * 更新基准的正确姿势：先确认顶层 shared/ 是对的，再
  *     python tools/check-shared-fixtures.py --fix
- * 然后把下面 EXPECTED_SHA256 改成新值。
+ * 然后把下面 EXPECTED_SHA256 改成新值（App 侧同步改）。
  */
 
 import assert from 'node:assert/strict';
@@ -29,14 +29,31 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
 
-/** 三份副本一致时的 sha256 前缀（与前程 App 侧保持一致）。 */
-const EXPECTED_SHA256 = 'a811360930cbd5c1';
+/** 三份副本一致时的 sha256 前缀（与 App 侧保持一致）。 */
+const EXPECTED_SHA256 = 'eb3760d1decafd71';
 
 const fixturePath = resolve(process.cwd(), 'shared/schedule-fixtures.json');
 
+const CRLF = String.fromCharCode(13) + String.fromCharCode(10);
+const LF = String.fromCharCode(10);
+
+/**
+ * 归一换行符后再求摘要。
+ *
+ * 这个文件在 git 里存的是 LF，但 Windows 的 `core.autocrlf` 会让工作区变成 CRLF。
+ * 若直接对原始字节求摘要，同一份内容在本地与 CI 会得出两个不同的值——
+ * 那样测的就不是「文件内容有没有变」，而是「在哪台机器上跑的」。
+ *
+ * 这正是这套检查第一次上线时「本地绿、CI 红」的原因。
+ */
+function normalizedBuf(buffer: Buffer): Buffer {
+  const text = buffer.toString('utf8').split(CRLF).join(LF);
+  return Buffer.from(text, 'utf8');
+}
+
 test('契约 fixture 未被单方面修改', () => {
   const content = readFileSync(fixturePath);
-  const digest = createHash('sha256').update(content).digest('hex');
+  const digest = createHash('sha256').update(normalizedBuf(content)).digest('hex');
 
   assert.equal(
     digest.slice(0, EXPECTED_SHA256.length),
