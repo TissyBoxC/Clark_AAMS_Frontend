@@ -1,6 +1,6 @@
 /*
  * 运行时 API 共用的最小 fetch 封装。
- * 统一处理认证头、CSRF 透传、后端信封解析以及页面可复用的错误对象。
+ * 统一处理认证头、后端信封解析以及页面可复用的错误对象。
  */
 
 import type { IApiEnvelopeType } from '../types/app-types';
@@ -109,26 +109,12 @@ function getErrorMessage(payload: unknown, fallback: string): string {
   return fallback;
 }
 
-function getCsrfToken(): string {
-  if (typeof document === 'undefined') {
-    return '';
-  }
-
-  const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
-  return meta?.content ?? '';
-}
-
 function buildHeaders(
   headers: HeadersInit | undefined,
   includeAuth: boolean,
   body: IRequestOptionsType['body'],
 ): Headers {
   const finalHeaders = new Headers(headers ?? {});
-  const csrfToken = getCsrfToken();
-
-  if (csrfToken && !finalHeaders.has('X-CSRF-Token')) {
-    finalHeaders.set('X-CSRF-Token', csrfToken);
-  }
 
   if (includeAuth) {
     const loginCode = getStoredLoginCode();
