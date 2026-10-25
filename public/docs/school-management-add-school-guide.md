@@ -183,15 +183,28 @@ new CourseDto(
 | 字段 | 说明 |
 | --- | --- |
 | `name` | 课程名，不能为空 |
-| `startWeek` | 起始周，可由 `weeks` 首项推导 |
-| `endWeek` | 结束周，可由 `weeks` 末项推导 |
+| **`weekRanges`** | **真相源**：连续周次区间，每项 `[start, end]`，例如 `[[1,8],[10,16]]` |
+| **`weekRule`** | **真相源**：`ALL` / `ODD` / `EVEN`，单双周标记 |
+| `startWeek` | 派生：由 `weekRanges` 首项的 start 得出 |
+| `endWeek` | 派生：由 `weekRanges` 末项的 end 得出 |
 | `dayOfWeek` | 星期一到星期日为 1 到 7 |
 | `startLesson` | 开始节次 |
 | `endLesson` | 结束节次 |
 | `location` | 上课地点 |
 | `teacher` | 教师，没有则空字符串 |
-| `weeks` | 展开后的周次数组，例如 `[1,2,3,5,6]` |
+| `weeks` | 派生：展开后的离散周次，例如 `[1,2,3,5,6]` |
 | `rawTime` | 原始时间文本，便于排查 |
+
+> **注意**：`startWeek` / `endWeek` / `weeks` 都是**派生字段**，
+> 不要把它们当作真相源。真相源是 `weekRanges + weekRule`。
+>
+> 早期文档写「`startWeek` 可由 `weeks` 首项推导」是错误的：
+> 单双周课程（如 `weekRule=ODD`、`weeks=[1,3,5,7]`）首末项分别是 1 和 7，
+> 但周次并非连续，用首末项无法还原。整个代码库现在统一以
+> `weekRanges + weekRule` 为准，新增学校适配时请只填这两个字段。
+
+标准构造入口是 `CourseDto.of(name, dayOfWeek, startLesson, endLesson, location, teacher, rawTime, pattern)`，
+它由 `WeekPattern` 一次性派生出全部冗余字段，从根上避免自相矛盾。
 
 JIT 的 Parser 使用 `jsoup`：
 
