@@ -21,7 +21,7 @@ import type {
   ISchoolScaffoldPayloadType,
 } from '../types/app-types';
 
-import { requestEnvelope, requestJson } from './http';
+import { requestEnvelope } from './http';
 
 const ADMIN_SESSION_REQUEST_OPTIONS = {
   includeAuth: false,
@@ -177,7 +177,8 @@ export async function recognizeCourses(files: File[]): Promise<ICourseType[]> {
     formData.append('images', file);
   });
 
-  return requestJson<ICourseType[]>('/api/v1/courses/recognize', {
+  // P2-2：后端已统一为 {code,message,data} 信封，data 为课程数组。
+  return requestEnvelope<ICourseType[]>('/api/v1/courses/recognize', {
     method: 'POST',
     includeAuth: false,
     body: formData,

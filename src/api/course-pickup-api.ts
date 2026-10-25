@@ -14,7 +14,7 @@ import type {
 
 import { getStoredLoginCode } from '../utils/auth-storage';
 
-import { buildApiUrl, HttpError, requestEnvelope, requestJson } from './http';
+import { buildApiUrl, HttpError, requestEnvelope } from './http';
 
 interface IXhrEnvelopeType<T> {
   code?: number;
@@ -49,7 +49,10 @@ export async function parseSchoolCourseImport(
 }
 
 export async function fetchCoursePickupJson(code: string): Promise<JsonValueType> {
-  return requestJson<JsonValueType>(`/api/v1/course-pickups/${encodeURIComponent(code)}`);
+  // P2-2：后端已统一为 {code,message,data} 信封，data 为课程数组。
+  return requestEnvelope<JsonValueType>(
+    `/api/v1/course-pickups/${encodeURIComponent(code)}`,
+  );
 }
 
 export async function uploadCourseImages(

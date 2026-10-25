@@ -5,6 +5,9 @@
 
 import type { IApiEnvelopeType } from '../types/app-types';
 
+import type { ErrorKind } from '../constants/error-codes';
+
+import { classifyError, isRetryable } from '../constants/error-codes';
 import { getStoredLoginCode } from '../utils/auth-storage';
 
 const CONFIGURED_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').trim();
@@ -30,6 +33,21 @@ export class HttpError extends Error {
     if (isApiEnvelope(payload)) {
       this.code = payload.code;
     }
+  }
+
+  /**
+   * 错误分类（P2-3）。
+   *
+   * 页面据此决定「跳登录 / 提示无权限 / 提示明天再试 / 允许重试」，
+   * 不必各自去拼 `status === 429` 这类判断。
+   */
+  get kind(): ErrorKind {
+    return classifyError(this.code, this.status);
+  }
+
+  /** 该错误是否值得让用户原地重试（配额用尽重试无意义）。 */
+  get retryable(): boolean {
+    return isRetryable(this.kind);
   }
 }
 
@@ -181,19 +199,6 @@ export async function requestEnvelope<T>(
   }
 
   return payload.data;
-}
-
-export async function requestJson<T>(
-  url: string,
-  options: IRequestOptionsType = {},
-): Promise<T> {
-  const { response, payload } = await performRequest<T>(url, options);
-
-  if (!response.ok) {
-    throw new HttpError(getErrorMessage(payload, `HTTP ${response.status}`), response.status, payload);
-  }
-
-  return payload;
 }
 
 export async function requestText(
