@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号（如 v1.0.0）；留空则用 0.0.1'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npx tsc -b
+        continue-on-error: true
+
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Build
+        run: npm run build
+
+      - name: Resolve version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            V="${{ github.event.inputs.version }}"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            V="${GITHUB_REF#refs/tags/}"
+          else
+            V="0.0.1"
+          fi
+          echo "tag=$V" >> "$GITHUB_OUTPUT"
+          echo "tag: $V"
+
+      - name: Package dist
+        run: |
+          mkdir -p out
+          tar -czf "out/Clark_AAMS_Frontend_${{ steps.version.outputs.tag }}.tar.gz" -C dist .
+          (cd out && sha256sum *.tar.gz > SHA256SUMS.txt && cat SHA256SUMS.txt)
+          ls -lh out
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: clark-aams-frontend-dist
+          path: out/*.tar.gz
+          retention-days: 30
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Clark AAMS Frontend ${{ steps.version.outputs.tag }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            Clark AAMS Frontend ${{ steps.version.outputs.tag }}
+
+            - 提交：${{ github.sha }}
+            - 构建：GitHub Actions，Node.js 22，Vite 8
+
+            产物为 `dist` 目录的压缩包，解压后作为静态站点部署，
+            配合后端 API 使用。部署前请按 `.env.example` 配置
+            `VITE_API_BASE_URL` 指向后端地址。
+          files: out/*.tar.gz
