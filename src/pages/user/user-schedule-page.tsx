@@ -3,10 +3,18 @@ import { useEffect, useMemo, useState } from 'react';
 import type { IUserType } from '../../types/app-types';
 import type { ICourseType, IScheduleSettingsType } from '../../types/schedule-types.ts';
 
-import { clearMyCourses, deleteMyCourse, fetchMyCourses } from '../../api/course-api';
+import {
+  clearMyCourses,
+  createMyCourse,
+  deleteMyCourse,
+  fetchMyCourses,
+  updateMyCourse,
+} from '../../api/course-api';
+import type { ICourseUpsertPayloadType } from '../../api/course-api';
 import LoadingView from '../../components/LoadingView';
 import SupportFab from '../../components/SupportFab';
 import UserWorkspaceShell from '../../components/UserWorkspaceShell';
+import { CourseEditor } from './course-editor';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
 import {
@@ -89,6 +97,8 @@ function ScheduleBoard({ user }: { user: IUserType }) {
   const [courses, setCourses] = useState<ICourseType[]>(() => loadCourses(ownerId));
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [serverCourseIds, setServerCourseIds] = useState<Record<string, number>>({});
+  /** 编辑中的课程；`'new'` 表示新增，`null` 表示表单关闭。 */
+  const [editing, setEditing] = useState<ICourseType | 'new' | null>(null);
   const [loadError, setLoadError] = useState<string>('');
 
   useEffect(() => {
@@ -102,12 +112,21 @@ function ScheduleBoard({ user }: { user: IUserType }) {
           return;
         }
 
+        // 用服务端主键作为本地 id，保证「看到的那门课」与「要改的那门课」是同一个。
+        // 退回 index+1 只用于 id 缺失的老后端——但那会导致删除/编辑错位，
+        // 所以映射表同样记录真实 id，两者不一致时以映射表为准。
         const mapped = serverCourses.map((course, index) =>
-          normalizeCourse(course as unknown as Record<string, unknown>, index + 1),
+          normalizeCourse(
+            course as unknown as Record<string, unknown>,
+            course.id > 0 ? course.id : index + 1,
+          ),
         );
+        // 后端现在会回传真实主键，直接用，不再按数组下标猜。
+        // 之前 `id ?? 0` 的写法会让「拿不到 id」悄悄变成「id 是 0」，
+        // 而删除接口收到 0 只会返回 404，症状和「课不存在」一模一样。
         const idMap: Record<string, number> = {};
         serverCourses.forEach((course, index) => {
-          idMap[mapped[index].id] = (course as unknown as { id?: number }).id ?? 0;
+          idMap[mapped[index].id] = course.id;
         });
 
         setCourses(mapped);
@@ -181,6 +200,50 @@ function ScheduleBoard({ user }: { user: IUserType }) {
     saveScheduleSettings(ownerId, next);
     setSettings(next);
     setStatusMessage('学期设置已保存。');
+  }
+
+  /**
+   * 新增或编辑一门课（P3-3）。
+   *
+   * 先落服务端，成功后更新本地视图与服务端 id 映射——
+   * 与删除保持一致的方向：以服务端为准，本地只是缓存。
+   */
+  async function handleSaveCourse(payload: ICourseUpsertPayloadType): Promise<void> {
+    if (editing === 'new') {
+      const created = (await createMyCourse(payload)) as unknown as Record<string, unknown>;
+      const normalized = normalizeCourse(created, courses.length + 1);
+      const next = [...courses, normalized];
+
+      setCourses(next);
+      saveCourses(ownerId, next);
+      setServerCourseIds((previous) => ({
+        ...previous,
+        [normalized.id]: (created.id as number) ?? 0,
+      }));
+      setEditing(null);
+      setStatusMessage(`已添加「${normalized.name}」。`);
+      return;
+    }
+
+    if (!editing) {
+      return;
+    }
+
+    const serverId = serverCourseIds[editing.id];
+    if (!serverId) {
+      throw new Error('这门课还没同步到服务器，请刷新后重试。');
+    }
+
+    const updated = (await updateMyCourse(serverId, payload)) as unknown as Record<string, unknown>;
+    const normalized = normalizeCourse(updated, 0);
+    // 保留本地 id，避免视图里「这门课换了身份」导致 React key 变化
+    normalized.id = editing.id;
+    const next = courses.map((item) => (item.id === editing.id ? normalized : item));
+
+    setCourses(next);
+    saveCourses(ownerId, next);
+    setEditing(null);
+    setStatusMessage(`已更新「${normalized.name}」。`);
   }
 
   /** 删除一门课：先落服务端，成功后再更新本地视图。 */
@@ -267,6 +330,9 @@ function ScheduleBoard({ user }: { user: IUserType }) {
             >
               下一周
             </button>
+            <button type='button' className='button-primary' onClick={() => setEditing('new')}>
+              新增课程
+            </button>
             {courses.length > 0 ? (
               <button type='button' className='button-ghost' onClick={() => void handleClearAll()}>
                 清空课表
@@ -286,6 +352,14 @@ function ScheduleBoard({ user }: { user: IUserType }) {
         {loadError ? <p className='schedule-badge schedule-badge-warn'>{loadError}</p> : null}
 
         {statusMessage ? <p className='schedule-muted'>{statusMessage}</p> : null}
+
+        {editing ? (
+          <CourseEditor
+            course={editing === 'new' ? null : editing}
+            onSubmit={handleSaveCourse}
+            onCancel={() => setEditing(null)}
+          />
+        ) : null}
 
         {courses.length === 0 && !isLoading ? (
           <p className='schedule-empty'>
@@ -373,6 +447,13 @@ function ScheduleBoard({ user }: { user: IUserType }) {
                 </span>
                 <strong>{course.name}</strong>
                 <span className='schedule-muted'>{course.location}</span>
+                <button
+                  type='button'
+                  className='button-ghost'
+                  onClick={() => setEditing(course)}
+                >
+                  编辑
+                </button>
                 <button
                   type='button'
                   className='button-ghost'

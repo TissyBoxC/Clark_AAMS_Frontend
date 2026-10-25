@@ -4146,3 +4146,68 @@ body.dashboard-page::after {
 .button-row {
   margin-top: 16px;
 }
+
+/* ===== 课程编辑表单（P3-3）=====
+ * 手工新增/编辑课程是 Web 补齐的最后一个 App 同款能力。
+ * 沿用页面既有的 surface 视觉，不引入新的设计语言。
+ */
+.course-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  margin: 12px 0;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  border-radius: 12px;
+  background: var(--surface-muted, #fafafa);
+}
+
+.course-editor__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.course-editor__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.course-editor__field {
+  display: flex;
+  flex: 1 1 140px;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.course-editor__field > span {
+  color: var(--text-muted, #6b7280);
+}
+
+.course-editor__field > input,
+.course-editor__field > select {
+  padding: 6px 8px;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.course-editor__summary {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted, #6b7280);
+}
+
+.course-editor__error {
+  margin: 0;
+  font-size: 13px;
+  color: #b91c1c;
+}
+
+.course-editor__actions {
+  display: flex;
+  gap: 8px;
+}

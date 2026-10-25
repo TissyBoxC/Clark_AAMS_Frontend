@@ -9,6 +9,14 @@ import { requestEnvelope } from './http';
 
 /** 服务端返回的课程（周次同时给出展开结果与真相源）。 */
 export interface IServerCourseType {
+  /**
+   * 服务端主键。
+   *
+   * 必须回传：`PUT /schedule/{id}` 与 `DELETE /schedule/{id}` 都要用它。
+   * 之前后端没返回 id，前端只能按「数组下标 + 1」去猜，
+   * 一旦列表顺序变化就会删错课。
+   */
+  id: number;
   name: string;
   dayOfWeek: number;
   startLesson: number;
