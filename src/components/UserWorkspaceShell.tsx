@@ -17,7 +17,7 @@ interface IUserWorkspaceShellProps {
 }
 
 interface IUserWorkspaceNavItemType {
-  key: 'dashboard' | 'schedule' | 'import' | 'recognition' | 'pickup';
+  key: 'dashboard' | 'schedule' | 'questions' | 'import' | 'recognition' | 'pickup';
   href: string;
   label: string;
   group: 'overview' | 'tools';
@@ -48,6 +48,19 @@ const USER_WORKSPACE_NAV_ITEMS: IUserWorkspaceNavItemType[] = [
       <svg viewBox='0 0 24 24' fill='none'>
         <rect x='3.5' y='5.5' width='17' height='15' rx='2'></rect>
         <path d='M3.5 10.5h17M8 3.5v4M16 3.5v4'></path>
+      </svg>
+    ),
+  },
+  {
+    key: 'questions',
+    href: '/user/questions',
+    label: '题目解析',
+    group: 'tools',
+    icon: (
+      <svg viewBox='0 0 24 24' fill='none'>
+        <path d='M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.4v.6'></path>
+        <circle cx='12' cy='17.2' r='1'></circle>
+        <rect x='3.5' y='3.5' width='17' height='17' rx='4'></rect>
       </svg>
     ),
   },

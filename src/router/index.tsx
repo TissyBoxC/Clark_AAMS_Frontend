@@ -25,6 +25,7 @@ const UserImportPage = lazy(() => import('../pages/user/user-import-page'));
 const UserRecognitionPage = lazy(() => import('../pages/user/user-recognition-page'));
 const UserPickupPage = lazy(() => import('../pages/user/user-pickup-page'));
 const UserSchedulePage = lazy(() => import('../pages/user/user-schedule-page'));
+const UserQuestionsPage = lazy(() => import('../pages/user/user-questions-page'));
 const CourseImportPage = lazy(() => import('../pages/site/course-import-page'));
 const GuidePage = lazy(() => import('../pages/guide/guide-page'));
 const AdminLoginPage = lazy(() => import('../pages/admin/admin-login-page'));
@@ -204,6 +205,16 @@ export function AppRouter() {
             }
           />
           <Route path='/user/schedule.html' element={<AliasRedirect to='/user/schedule' />} />
+
+          <Route
+            path='/user/questions'
+            element={
+              <ProtectedRoute allow={['user', 'admin']}>
+                <UserQuestionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/user/questions.html' element={<AliasRedirect to='/user/questions' />} />
 
           <Route
             path='/user/import'
