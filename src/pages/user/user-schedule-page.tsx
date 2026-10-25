@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { IUserType } from '../../types/app-types';
 import type { ICourseType, IScheduleSettingsType } from '../../types/schedule-types.ts';
 
+import { clearMyCourses, deleteMyCourse, fetchMyCourses } from '../../api/course-api';
 import LoadingView from '../../components/LoadingView';
 import SupportFab from '../../components/SupportFab';
 import UserWorkspaceShell from '../../components/UserWorkspaceShell';
@@ -11,6 +12,7 @@ import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
 import {
   courseMatchesWeek,
   coursesOfDay,
+  normalizeCourse,
 } from '../../types/schedule-types.ts';
 import {
   currentWeek as computeCurrentWeek,
@@ -23,6 +25,7 @@ import {
   detectConflicts,
   loadCourses,
   loadScheduleSettings,
+  saveCourses,
   saveScheduleSettings,
 } from '../../utils/schedule-store.ts';
 
@@ -75,15 +78,64 @@ function UserSchedulePage() {
 function ScheduleBoard({ user }: { user: IUserType }) {
   const ownerId = String(user.id);
 
-  // localStorage 是同步可读的，用惰性初始化，避免空态闪烁。
-  // 本页只读：课程由导入/取件码流程写入，这里不需要 setter。
-  const [courses] = useState<ICourseType[]>(() => loadCourses(ownerId));
   const [settings, setSettings] = useState<IScheduleSettingsType>(() => loadScheduleSettings(ownerId));
   const [settingsDraft, setSettingsDraft] = useState<IScheduleSettingsType>(settings);
   const [viewWeek, setViewWeek] = useState<number>(
     () => computeCurrentWeek(settings.termStartDate, new Date(), settings.maxWeeks),
   );
   const [statusMessage, setStatusMessage] = useState<string>('');
+
+  // 课表以服务端为准（P3-1）；服务端不可用时回退到本地缓存，页面不至于空白。
+  const [courses, setCourses] = useState<ICourseType[]>(() => loadCourses(ownerId));
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [serverCourseIds, setServerCourseIds] = useState<Record<string, number>>({});
+  const [loadError, setLoadError] = useState<string>('');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load(): Promise<void> {
+      try {
+        const serverCourses = await fetchMyCourses();
+
+        if (cancelled) {
+          return;
+        }
+
+        const mapped = serverCourses.map((course, index) =>
+          normalizeCourse(course as unknown as Record<string, unknown>, index + 1),
+        );
+        const idMap: Record<string, number> = {};
+        serverCourses.forEach((course, index) => {
+          idMap[mapped[index].id] = (course as unknown as { id?: number }).id ?? 0;
+        });
+
+        setCourses(mapped);
+        setServerCourseIds(idMap);
+        // 同步写一份本地缓存，离线时可读
+        saveCourses(ownerId, mapped);
+        setLoadError('');
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
+        // 服务端不可用不是致命错误：继续展示本地缓存
+        setLoadError('暂时无法从服务器读取课表，正在显示本地缓存。');
+        setCourses(loadCourses(ownerId));
+        void error;
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [ownerId]);
 
   usePageMeta('我的课表', '周视图、今日课程、学期设置与冲突提示。');
 
@@ -129,6 +181,44 @@ function ScheduleBoard({ user }: { user: IUserType }) {
     saveScheduleSettings(ownerId, next);
     setSettings(next);
     setStatusMessage('学期设置已保存。');
+  }
+
+  /** 删除一门课：先落服务端，成功后再更新本地视图。 */
+  async function handleDeleteCourse(course: ICourseType): Promise<void> {
+    const serverId = serverCourseIds[course.id];
+
+    if (!serverId) {
+      setStatusMessage('这门课还没同步到服务器，请刷新后重试。');
+      return;
+    }
+
+    try {
+      await deleteMyCourse(serverId);
+      const next = courses.filter((item) => item.id !== course.id);
+
+      setCourses(next);
+      saveCourses(ownerId, next);
+      setStatusMessage(`已删除「${course.name}」。`);
+    } catch (error) {
+      setStatusMessage(error instanceof Error ? error.message : '删除失败，请稍后重试。');
+    }
+  }
+
+  /** 清空课表。 */
+  async function handleClearAll(): Promise<void> {
+    if (!window.confirm('确定清空全部课程？此操作不可撤销。')) {
+      return;
+    }
+
+    try {
+      const result = await clearMyCourses();
+
+      setCourses([]);
+      saveCourses(ownerId, []);
+      setStatusMessage(`已清空 ${result.removed} 门课程。`);
+    } catch (error) {
+      setStatusMessage(error instanceof Error ? error.message : '清空失败，请稍后重试。');
+    }
   }
 
   function lessonTimeText(rowIndex: number): string {
@@ -177,6 +267,11 @@ function ScheduleBoard({ user }: { user: IUserType }) {
             >
               下一周
             </button>
+            {courses.length > 0 ? (
+              <button type='button' className='button-ghost' onClick={() => void handleClearAll()}>
+                清空课表
+              </button>
+            ) : null}
           </div>
         </div>
 
@@ -186,10 +281,16 @@ function ScheduleBoard({ user }: { user: IUserType }) {
           {viewWeek === currentWeek ? '（当前周）' : ''}
         </p>
 
-        {courses.length === 0 ? (
+        {isLoading ? <p className='schedule-muted'>正在从服务器同步课表…</p> : null}
+
+        {loadError ? <p className='schedule-badge schedule-badge-warn'>{loadError}</p> : null}
+
+        {statusMessage ? <p className='schedule-muted'>{statusMessage}</p> : null}
+
+        {courses.length === 0 && !isLoading ? (
           <p className='schedule-empty'>
-            还没有课表数据。请先通过「教务导入」或「取件码回查」获取课程，
-            Web 端会把课程保存在本机浏览器中。
+            还没有课表数据。请先通过「教务导入」或「取件码回查」获取课程；
+            登录状态下的导入结果会保存到账号，换设备也能看到。
           </p>
         ) : (
           <div className='schedule-grid-wrap'>
@@ -272,6 +373,13 @@ function ScheduleBoard({ user }: { user: IUserType }) {
                 </span>
                 <strong>{course.name}</strong>
                 <span className='schedule-muted'>{course.location}</span>
+                <button
+                  type='button'
+                  className='button-ghost'
+                  onClick={() => void handleDeleteCourse(course)}
+                >
+                  删除
+                </button>
               </li>
             ))}
           </ul>
@@ -281,7 +389,7 @@ function ScheduleBoard({ user }: { user: IUserType }) {
       <section className='surface-card schedule-panel'>
         <div className='schedule-panel-head'>
           <h2>冲突提示</h2>
-          <span className={conflicts.length > 0 ? 'badge badge-warn' : 'badge'}>
+          <span className={conflicts.length > 0 ? 'schedule-badge schedule-badge-warn' : 'schedule-badge'}>
             {conflicts.length} 处
           </span>
         </div>
