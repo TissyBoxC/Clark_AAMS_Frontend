@@ -1,4 +1,6 @@
 import type { IUserType } from '../types/app-types';
+import { normalizeRole as normalizeRoleShared } from '../utils/role-routing';
+import type { UserRoleType } from '../utils/role-routing';
 
 import { requestEnvelope } from './http';
 
@@ -7,8 +9,12 @@ import { requestEnvelope } from './http';
  *
  * 后端以大写传输（GUEST/USER/ADMIN），前端统一小写处理，
  * 比较时用 `normalizeRole` 归一，避免大小写不一致导致误判。
+ *
+ * 类型定义与工作台路由函数移至 `utils/role-routing`（纯函数、无 http 依赖），
+ * 这里重新导出以保持既有引用不变。
  */
-export type UserRoleType = 'guest' | 'user' | 'admin';
+export type { UserRoleType } from '../utils/role-routing';
+export { workspacePathForRole } from '../utils/role-routing';
 
 export interface IIdentityType {
   role: UserRoleType;
@@ -17,16 +23,9 @@ export interface IIdentityType {
   user: IUserType | null;
 }
 
-/** 归一大后端返回的角色值；未知值一律视为 guest（最小权限）。 */
+/** 归一后端返回的角色值；未知值一律视为 guest（最小权限）。 */
 export function normalizeRole(value: unknown): UserRoleType {
-  if (typeof value !== 'string') {
-    return 'guest';
-  }
-  const normalized = value.trim().toLowerCase();
-  if (normalized === 'admin' || normalized === 'user') {
-    return normalized;
-  }
-  return 'guest';
+  return normalizeRoleShared(value);
 }
 
 /**
@@ -54,13 +53,4 @@ export async function fetchIdentity(): Promise<IIdentityType> {
   };
 }
 
-/** 该角色应进入的工作台首页。 */
-export function workspacePathForRole(role: UserRoleType): string {
-  if (role === 'admin') {
-    return '/admin/dashboard';
-  }
-  if (role === 'user') {
-    return '/user';
-  }
-  return '/login';
-}
+

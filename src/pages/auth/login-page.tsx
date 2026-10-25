@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { loginLandingPath } from '../../utils/role-routing';
 import { loginUser } from '../../api/user-api';
 import AuthSceneLayout from '../../components/AuthSceneLayout';
 import {
@@ -81,7 +82,11 @@ function LoginPage() {
             },
       );
       updateUser(nextUser);
-      navigate(redirectUrl, {
+
+      // 登录后按身份分流（P1-1）：管理员账号现在也走这条登录路径，
+      // 因此不能无条件跳 /user。登录响应里带了 role，可直接决定去向。
+      const target = loginLandingPath(nextUser.role, redirectUrl);
+      navigate(target, {
         replace: true,
       });
     } catch (error) {

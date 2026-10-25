@@ -20,6 +20,18 @@ export interface IUserType {
   emailBound: boolean;
   emailVerified: boolean;
   questionAnalysisCount: number;
+  /**
+   * 身份角色（P1-1 账号表合并后由后端返回）。
+   *
+   * 管理员与普通用户现在走同一条登录路径，前端必须能从登录响应
+   * 直接拿到角色，才能「登录后按身份进入不同工作台」；否则还要再请求
+   * 一次 `/auth/me`，中间会有一帧「已登录但不知道去哪」的空状态。
+   *
+   * 这里用字面量而不是从 `identity-api` 引入 `UserRoleType`，
+   * 是为了避免 types ↔ api 的循环依赖。
+   * 字段可选是兼容老后端：缺失时按普通用户处理。
+   */
+  role?: 'guest' | 'user' | 'admin';
 }
 
 export interface ISchoolLoginType {
