@@ -17,7 +17,7 @@ interface IUserWorkspaceShellProps {
 }
 
 interface IUserWorkspaceNavItemType {
-  key: 'dashboard' | 'import' | 'recognition' | 'pickup';
+  key: 'dashboard' | 'schedule' | 'import' | 'recognition' | 'pickup';
   href: string;
   label: string;
   group: 'overview' | 'tools';
@@ -36,6 +36,18 @@ const USER_WORKSPACE_NAV_ITEMS: IUserWorkspaceNavItemType[] = [
         <rect x='13.5' y='4.5' width='7' height='4' rx='2'></rect>
         <rect x='13.5' y='11.5' width='7' height='8' rx='2'></rect>
         <rect x='3.5' y='14.5' width='7' height='5' rx='2'></rect>
+      </svg>
+    ),
+  },
+  {
+    key: 'schedule',
+    href: '/user/schedule',
+    label: '我的课表',
+    group: 'overview',
+    icon: (
+      <svg viewBox='0 0 24 24' fill='none'>
+        <rect x='3.5' y='5.5' width='17' height='15' rx='2'></rect>
+        <path d='M3.5 10.5h17M8 3.5v4M16 3.5v4'></path>
       </svg>
     ),
   },
