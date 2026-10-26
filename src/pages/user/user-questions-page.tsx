@@ -115,7 +115,7 @@ function UserQuestionsPage() {
     <UserWorkspaceShell
       user={user}
       title='题目解析'
-      description='粘贴题目内容，AI 会给出参考答案与解析。'
+      description='把题目粘进来，就能得到参考答案和讲解。'
     >
       <div className='schedule-page'>
         <section className='surface-card schedule-panel'>
@@ -163,7 +163,7 @@ function UserQuestionsPage() {
             {isFillBlank ? (
               <>
                 <label className='question-field'>
-                  材料（可选）
+                  材料（选填，有阅读材料时再填）
                   <textarea
                     rows={3}
                     value={material}
@@ -172,7 +172,7 @@ function UserQuestionsPage() {
                 </label>
                 <div className='schedule-form-grid'>
                   <label>
-                    参考答案（可选）
+                    参考答案（选填）
                     <input
                       type='text'
                       value={referenceAnswer}
@@ -180,7 +180,7 @@ function UserQuestionsPage() {
                     />
                   </label>
                   <label>
-                    我的答案（可选）
+                    我的答案（选填，想对照时再填）
                     <input
                       type='text'
                       value={studentAnswer}
@@ -192,10 +192,18 @@ function UserQuestionsPage() {
             ) : null}
 
             <div className='button-row'>
-              <button type='submit' className='button-primary' disabled={isSubmitting}>
-                {isSubmitting ? '解析中…' : '开始解析'}
+              {/* 题目为空时就禁用，而不是等用户点了再告诉他「请填写题目内容」 */}
+              <button
+                type='submit'
+                className='button-primary'
+                disabled={isSubmitting || !content.trim()}
+              >
+                {isSubmitting ? '正在解析…' : '解析这道题'}
               </button>
             </div>
+            {!content.trim() ? (
+              <p className='schedule-muted'>把题目内容粘到上面，就能开始解析了。</p>
+            ) : null}
           </form>
 
           {statusMessage ? <p className='schedule-muted'>{statusMessage}</p> : null}

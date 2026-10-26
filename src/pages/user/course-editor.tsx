@@ -209,10 +209,14 @@ export function CourseEditor({ course, onSubmit, onCancel }: ICourseEditorPropsT
 
       <p className='course-editor__summary'>上课时间：{formatWeekSummary(values)}</p>
       {error ? <p className='course-editor__error'>{error}</p> : null}
+      {/* 按钮灰着的时候要说清缺什么，否则用户只能一个个字段去猜 */}
+      {!values.name.trim() ? (
+        <p className='course-editor__summary'>填上课程名称就能保存了。</p>
+      ) : null}
 
       <div className='course-editor__actions'>
         <button type='submit' className='button-primary' disabled={!canSubmit}>
-          {isSubmitting ? '保存中…' : '保存'}
+          {isSubmitting ? '正在保存…' : '保存课程'}
         </button>
         <button type='button' className='button-ghost' onClick={onCancel} disabled={isSubmitting}>
           取消
