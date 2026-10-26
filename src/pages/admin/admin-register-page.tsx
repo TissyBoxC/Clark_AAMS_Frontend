@@ -7,6 +7,7 @@ import { usePageMeta } from '../../hooks/usePageMeta';
 import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 
 import styles from './admin-pages.module.css';
+import { userMessageFor } from '../../constants/error-codes';
 
 function AdminRegisterPage() {
   const navigate = useTransitionNavigate();
@@ -18,7 +19,7 @@ function AdminRegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useBodyClass('admin-route');
-  usePageMeta('管理员初始化注册', 'Clark AAMS 首个管理员账号初始化页。');
+  usePageMeta('管理员初始化注册', '珂拉课程表 首个管理员账号初始化页。');
 
   useEffect(() => {
     let isMounted = true;
@@ -36,7 +37,7 @@ function AdminRegisterPage() {
         }
       } catch (error) {
         if (isMounted) {
-          setStatusMessage(error instanceof Error ? error.message : '初始化状态读取失败');
+          setStatusMessage(userMessageFor(error));
         }
       } finally {
         if (isMounted) {
@@ -76,7 +77,7 @@ function AdminRegisterPage() {
         replace: true,
       });
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : '创建管理员失败');
+      setStatusMessage(userMessageFor(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -93,7 +94,7 @@ function AdminRegisterPage() {
           <a className={styles.adminAuthBrand} href='/'>
             <img src='/site/logo.png' alt='' />
             <span>
-              <strong>Clark AAMS</strong>
+              <strong>珂拉课程表</strong>
                 <small>初始化</small>
             </span>
           </a>

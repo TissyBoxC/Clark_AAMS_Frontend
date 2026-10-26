@@ -11,6 +11,7 @@ import {
   type WeekModeType,
 } from '../../utils/course-form';
 import type { ICourseType } from '../../types/schedule-types.ts';
+import { userMessageFor } from '../../constants/error-codes';
 
 /*
  * 手工新增 / 编辑课程的表单（P3-3）。
@@ -87,7 +88,7 @@ export function CourseEditor({ course, onSubmit, onCancel }: ICourseEditorPropsT
     try {
       await onSubmit(buildCoursePayload(values));
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : '保存失败，请稍后重试。');
+      setError(userMessageFor(submitError));
     } finally {
       setIsSubmitting(false);
     }

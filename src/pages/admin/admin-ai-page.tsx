@@ -7,6 +7,7 @@ import { usePageMeta } from '../../hooks/usePageMeta';
 import { formatJson } from '../../utils/json';
 
 import styles from './admin-pages.module.css';
+import { userMessageFor } from '../../constants/error-codes';
 
 function AdminAiPage() {
   const [baseUrl, setBaseUrl] = useState<string>('');
@@ -22,7 +23,7 @@ function AdminAiPage() {
   const [isRecognizing, setIsRecognizing] = useState<boolean>(false);
 
   useBodyClass('admin-route');
-  usePageMeta('AI 识别配置', '配置 Clark AAMS 的 AI 视觉模型与识别测试能力。');
+  usePageMeta('AI 识别配置', '配置 珂拉课程表 的 AI 视觉模型与识别测试能力。');
 
   async function loadConfig(): Promise<void> {
     setSaveStatus('正在读取配置...');
@@ -33,10 +34,10 @@ function AdminAiPage() {
       setModel(config.model || '');
       setApiKey('');
       setClearApiKey(false);
-      setKeyState(config.apiKeyConfigured ? '已配置 API Key' : '未配置');
+      setKeyState(config.apiKeyConfigured ? '已保存访问密钥' : '还没有填写访问密钥');
       setSaveStatus('配置已加载');
     } catch (error) {
-      setSaveStatus(error instanceof Error ? error.message : '配置读取失败');
+      setSaveStatus(userMessageFor(error));
       setKeyState('读取失败');
     }
   }
@@ -65,10 +66,10 @@ function AdminAiPage() {
       });
       setApiKey('');
       setClearApiKey(false);
-      setKeyState(config.apiKeyConfigured ? '已配置 API Key' : '未配置');
+      setKeyState(config.apiKeyConfigured ? '已保存访问密钥' : '还没有填写访问密钥');
       setSaveStatus('配置已保存');
     } catch (error) {
-      setSaveStatus(error instanceof Error ? error.message : '配置保存失败');
+      setSaveStatus(userMessageFor(error));
     } finally {
       setIsSaving(false);
     }
@@ -90,7 +91,7 @@ function AdminAiPage() {
       setResultText(formatJson(result));
       setRecognizeStatus('识别完成');
     } catch (error) {
-      setRecognizeStatus(error instanceof Error ? error.message : '识别失败');
+      setRecognizeStatus(userMessageFor(error));
       setResultText('');
     } finally {
       setIsRecognizing(false);
@@ -124,13 +125,13 @@ function AdminAiPage() {
                 <input className={styles.input} required placeholder='gpt-4o-mini' value={model} onChange={(event) => setModel(event.target.value)} />
               </label>
               <label className={styles.field}>
-                <span>API Key</span>
+                <span>访问密钥</span>
                 <input className={styles.input} type='password' autoComplete='new-password' placeholder='留空则保留原 key' value={apiKey} onChange={(event) => setApiKey(event.target.value)} />
                 <span className={styles.hint}>{keyState}</span>
               </label>
               <label className={styles.check}>
                 <input type='checkbox' checked={clearApiKey} onChange={(event) => setClearApiKey(event.target.checked)} />
-                清空已保存的 API Key
+                清除已保存的访问密钥
               </label>
               <div className={styles.actions}>
                 <button className={styles.button} type='submit' disabled={isSaving}>
@@ -148,7 +149,7 @@ function AdminAiPage() {
           <div className={styles.panelHead}>
             <div>
               <h2>识别测试</h2>
-              <p>接口字段名为 images，可一次上传多张。</p>
+              <p>可以一次选多张图片。图片越清晰，识别越准。</p>
             </div>
             <span className={styles.statusText}>{recognizeStatus}</span>
           </div>

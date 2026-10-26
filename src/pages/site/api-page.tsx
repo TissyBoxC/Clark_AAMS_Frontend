@@ -67,7 +67,7 @@ const DOC_LINKS: IApiLinkType[] = [
   {
     method: 'DOC',
     path: 'question-analysis-api.md',
-    description: '题目解析接口',
+    description: '题目解析',
     href: '/docs/question-analysis-api.md',
   },
   {
@@ -80,7 +80,7 @@ const DOC_LINKS: IApiLinkType[] = [
 
 function ApiPage() {
   useBodyClass('api-page');
-  usePageMeta('接口文档', 'Clark AAMS 后端接口、公开端点与开发参考文档入口。');
+  usePageMeta('开发文档', '面向开发者的接入说明与公开数据说明。');
   const apiAccessLabel = getApiBaseUrl() || '/api (统一入口)';
 
   return (
@@ -153,7 +153,7 @@ function ApiPage() {
         </section>
       </main>
 
-      <PageFooter leftText='Clark AAMS API Surface' rightHref='/' rightLabel='返回首页' />
+      <PageFooter leftText='珂拉课程表 API Surface' rightHref='/' rightLabel='返回首页' />
       <SupportFab />
     </>
   );

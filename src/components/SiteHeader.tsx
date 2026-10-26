@@ -47,10 +47,10 @@ function SiteHeader({
   return (
     <header className='home-topbar'>
       <div className='page-shell home-nav'>
-        <a className='brand' href='/' aria-label='Clark AAMS 首页'>
+        <a className='brand' href='/' aria-label='珂拉课程表 首页'>
           <img src='/site/logo.png' alt='' />
           <span className='brand-lockup'>
-            <strong className='brand-title'>Clark AAMS</strong>
+            <strong className='brand-title'>珂拉课程表</strong>
             <small className='brand-domain'>clarkhub.cn</small>
           </span>
         </a>

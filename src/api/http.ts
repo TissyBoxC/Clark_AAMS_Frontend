@@ -23,6 +23,13 @@ export class HttpError extends Error {
   readonly status: number;
   readonly payload: unknown;
   readonly code?: number;
+  /**
+   * 后端信封里的原始 message。
+   *
+   * 保留它是为了排查问题时能拿到原始信息，**不等于可以直接显示**：
+   * 界面上一律走 `userMessageFor(error)` 取文案。
+   */
+  readonly payloadMessage: string;
 
   constructor(message: string, status: number, payload: unknown = null) {
     super(message);
@@ -32,6 +39,10 @@ export class HttpError extends Error {
 
     if (isApiEnvelope(payload)) {
       this.code = payload.code;
+      this.payloadMessage =
+        typeof payload.message === 'string' ? payload.message : '';
+    } else {
+      this.payloadMessage = '';
     }
   }
 

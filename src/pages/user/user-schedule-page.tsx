@@ -17,6 +17,7 @@ import UserWorkspaceShell from '../../components/UserWorkspaceShell';
 import { CourseEditor } from './course-editor';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
+import { userMessageFor } from '../../constants/error-codes';
 import {
   courseMatchesWeek,
   coursesOfDay,
@@ -263,7 +264,7 @@ function ScheduleBoard({ user }: { user: IUserType }) {
       saveCourses(ownerId, next);
       setStatusMessage(`已删除「${course.name}」。`);
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : '删除失败，请稍后重试。');
+      setStatusMessage(userMessageFor(error));
     }
   }
 
@@ -280,7 +281,7 @@ function ScheduleBoard({ user }: { user: IUserType }) {
       saveCourses(ownerId, []);
       setStatusMessage(`已清空 ${result.removed} 门课程。`);
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : '清空失败，请稍后重试。');
+      setStatusMessage(userMessageFor(error));
     }
   }
 

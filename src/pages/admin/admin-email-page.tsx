@@ -8,6 +8,7 @@ import { useBodyClass } from '../../hooks/useBodyClass';
 import { usePageMeta } from '../../hooks/usePageMeta';
 
 import styles from './admin-pages.module.css';
+import { userMessageFor } from '../../constants/error-codes';
 
 const EMPTY_EMAIL_CONFIG: IAdminEmailConfigType = {
   enabled: false,
@@ -28,7 +29,7 @@ function AdminEmailPage() {
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   useBodyClass('admin-route');
-  usePageMeta('邮箱配置', '配置 Clark AAMS 邮箱验证码发送服务。');
+  usePageMeta('邮箱配置', '配置 珂拉课程表 邮箱验证码发送服务。');
 
   async function loadConfig(): Promise<void> {
     setSaveStatus('正在读取配置...');
@@ -40,7 +41,7 @@ function AdminEmailPage() {
       setClearApiKey(false);
       setSaveStatus('配置已加载');
     } catch (error) {
-      setSaveStatus(error instanceof Error ? error.message : '配置读取失败');
+      setSaveStatus(userMessageFor(error));
     }
   }
 
@@ -84,7 +85,7 @@ function AdminEmailPage() {
       setClearApiKey(false);
       setSaveStatus('配置已保存');
     } catch (error) {
-      setSaveStatus(error instanceof Error ? error.message : '配置保存失败');
+      setSaveStatus(userMessageFor(error));
     } finally {
       setIsSaving(false);
     }
@@ -137,12 +138,12 @@ function AdminEmailPage() {
                 </label>
                 <label className={styles.field}>
                   <span>发件名称</span>
-                  <input className={styles.input} placeholder='例如 Clark AAMS' value={config.senderName} onChange={(event) => setConfig((previous) => ({ ...previous, senderName: event.target.value }))} />
+                  <input className={styles.input} placeholder='例如 珂拉课程表' value={config.senderName} onChange={(event) => setConfig((previous) => ({ ...previous, senderName: event.target.value }))} />
                 </label>
               </div>
               <label className={styles.field}>
                 <span>验证邮件标题</span>
-                <input className={styles.input} placeholder='例如 Clark AAMS QQ 邮箱验证码' value={config.verificationSubject} onChange={(event) => setConfig((previous) => ({ ...previous, verificationSubject: event.target.value }))} />
+                <input className={styles.input} placeholder='例如 珂拉课程表 QQ 邮箱验证码' value={config.verificationSubject} onChange={(event) => setConfig((previous) => ({ ...previous, verificationSubject: event.target.value }))} />
               </label>
               <label className={styles.field}>
                 <span>API Key / SMTP 授权码</span>

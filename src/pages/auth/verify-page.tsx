@@ -13,6 +13,7 @@ import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 import { useAuthStore } from '../../store/auth-context';
 import { getStoredLoginCode } from '../../utils/auth-storage';
 import { safeRedirect } from '../../utils/navigation';
+import { userMessageFor } from '../../constants/error-codes';
 
 type EmailDomainType = '@qq.com' | '@foxmail.com';
 
@@ -73,7 +74,7 @@ function VerifyPage() {
   const redirectTimerRef = useRef<number | null>(null);
 
   useBodyClass('verify-page');
-  usePageMeta('邮箱验证', 'Clark AAMS 邮箱验证页，支持发送验证码并在成功后返回用户中心。');
+  usePageMeta('邮箱验证', '珂拉课程表 邮箱验证页，支持发送验证码并在成功后返回用户中心。');
 
   const userEmailParts = useMemo(() => parseEmailParts(user.email), [user.email]);
   const emailPrefix = emailPrefixDraft ?? userEmailParts.prefix;
@@ -131,7 +132,7 @@ function VerifyPage() {
     }
 
     if (cooldownSeconds > 0) {
-      setStatusMessage(`验证码发送过于频繁，请 ${cooldownSeconds} 秒后再试。`);
+      setStatusMessage(`两次发送间隔一分钟，请 ${cooldownSeconds} 秒后再取新码。`);
       setStatusVariant('error');
       return;
     }
@@ -150,13 +151,13 @@ function VerifyPage() {
       setStatusMessage('验证码已发送，请检查邮箱。');
       setStatusVariant('success');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '验证码发送失败';
+      const errorMessage = userMessageFor(error);
       const retryAfterSeconds = parseCooldownSeconds(errorMessage);
 
       if (retryAfterSeconds > 0) {
         setHasSentCode(true);
         setCooldownSeconds(retryAfterSeconds);
-        setStatusMessage(`验证码发送过于频繁，请 ${retryAfterSeconds} 秒后再试；如果已经收到验证码，请直接填写并校验。`);
+        setStatusMessage(`请 ${retryAfterSeconds} 秒后再发送。如果邮箱已经收到验证码，现在就可以填写。`);
       } else {
         setStatusMessage(errorMessage);
       }
@@ -196,7 +197,7 @@ function VerifyPage() {
         });
       }, 900);
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : '邮箱验证失败');
+      setStatusMessage(userMessageFor(error));
       setStatusVariant('error');
     } finally {
       setIsSubmitting(false);

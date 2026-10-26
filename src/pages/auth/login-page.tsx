@@ -19,6 +19,7 @@ import { usePageMeta } from '../../hooks/usePageMeta';
 import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 import { useAuthStore } from '../../store/auth-context';
 import { safeRedirect } from '../../utils/navigation';
+import { userMessageFor } from '../../constants/error-codes';
 
 type LoginMethodType = 'email' | 'code';
 
@@ -35,7 +36,7 @@ function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useBodyClass('auth-page');
-  usePageMeta('登录', 'Clark AAMS 用户登录页，支持 QQ 邮箱密码登录与登录码恢复。');
+  usePageMeta('登录', '珂拉课程表 用户登录页，支持 QQ 邮箱密码登录与登录码恢复。');
 
   const redirectUrl = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -90,7 +91,7 @@ function LoginPage() {
         replace: true,
       });
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : '登录失败');
+      setStatusMessage(userMessageFor(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -105,10 +106,10 @@ function LoginPage() {
       <AuthSceneLayout>
         <section className='auth-scene-card'>
           <div className='auth-scene-card__header'>
-            <h1>{loginMethod === 'email' ? '登录' : '恢复会话'}</h1>
+            <h1>{loginMethod === 'email' ? '登录' : '恢复登录'}</h1>
             <p>
               {loginMethod === 'email'
-                ? '用 QQ 邮箱继续你的 Clark AAMS 课程工作流。'
+                ? '用 QQ 邮箱继续你的 珂拉课程表 课程工作流。'
                 : '输入保存过的登录码，恢复之前的使用状态。'}
             </p>
           </div>

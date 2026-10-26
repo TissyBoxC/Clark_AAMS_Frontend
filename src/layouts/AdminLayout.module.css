@@ -26,10 +26,10 @@
   padding: 0.95rem 1rem;
   border: 1px solid var(--admin-line-strong);
   border-radius: 1.35rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
   color: var(--admin-text);
   text-decoration: none;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .sidebarHead img {
@@ -64,7 +64,7 @@
   padding: 1rem;
   border: 1px solid var(--admin-line);
   border-radius: 1.35rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
 }
 
 .profileMeta {
@@ -115,7 +115,7 @@
 .navLink:hover,
 .navLinkActive {
   border-color: var(--admin-line-strong);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--admin-panel);
   color: var(--admin-text);
 }
 
@@ -126,7 +126,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--admin-panel);
   color: var(--admin-primary);
   font-size: 0.72rem;
   font-weight: 800;
@@ -200,10 +200,10 @@
   justify-content: center;
   min-height: 2.6rem;
   padding: 0 1rem;
-  border: 1px solid rgba(255, 130, 130, 0.18);
+  border: 1px solid var(--admin-line-strong);
   border-radius: 999px;
-  background: rgba(255, 130, 130, 0.08);
-  color: #ffb3a8;
+  background: #ffffff;
+  color: var(--admin-danger);
   font: inherit;
   font-size: 0.88rem;
   font-weight: 800;
@@ -211,9 +211,9 @@
 }
 
 .logoutButton:hover {
-  border-color: rgba(255, 130, 130, 0.3);
-  background: rgba(255, 130, 130, 0.14);
-  color: #ffd0c8;
+  border-color: var(--admin-danger);
+  background: #ffe9ee;
+  color: var(--admin-danger);
 }
 
 .content {

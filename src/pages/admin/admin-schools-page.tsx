@@ -9,6 +9,7 @@ import { usePageMeta } from '../../hooks/usePageMeta';
 import { formatJson } from '../../utils/json';
 
 import styles from './admin-pages.module.css';
+import { userMessageFor } from '../../constants/error-codes';
 
 const INITIAL_SCAFFOLD_FORM: ISchoolScaffoldPayloadType = {
   schoolId: 'njupt',
@@ -43,7 +44,7 @@ function AdminSchoolsPage() {
       setTableStatus(`已加载 ${nextSchools.length} 所学校`);
     } catch (error) {
       setSchools([]);
-      setTableStatus(error instanceof Error ? error.message : '学校列表读取失败');
+      setTableStatus(userMessageFor(error));
     }
   }
 
@@ -67,7 +68,7 @@ function AdminSchoolsPage() {
       setStatusMessage(`脚手架生成成功：${formatJson(result)}`);
       void loadSchools();
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : '脚手架生成失败');
+      setStatusMessage(userMessageFor(error));
     } finally {
       setIsSubmitting(false);
     }

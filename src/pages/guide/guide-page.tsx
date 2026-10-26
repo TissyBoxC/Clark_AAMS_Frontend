@@ -40,7 +40,7 @@ function GuidePage() {
   const { articleHtml, errorMessage, isLoading } = useGuideArticle(resolvedSlug);
 
   useBodyClass('guide-page');
-  usePageMeta(entry?.title || '用户指南', entry?.summary || 'Clark AAMS 用户指南内容页。');
+  usePageMeta(entry?.title || '用户指南', entry?.summary || '珂拉课程表 用户指南内容页。');
 
   const isLoggedIn = isAuthResolved && user.id > 0;
   const userHref = isLoggedIn ? '/user' : '/login';

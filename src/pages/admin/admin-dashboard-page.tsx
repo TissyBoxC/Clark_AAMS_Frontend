@@ -18,10 +18,10 @@ function AdminDashboardPage() {
   const [minimumVersion, setMinimumVersion] = useState<string>('加载中');
   const [aiState, setAiState] = useState<string>('加载中');
   const [emailState, setEmailState] = useState<string>('加载中');
-  const [loadSummary, setLoadSummary] = useState<string>('正在读取后台接口状态。');
+  const [loadSummary, setLoadSummary] = useState<string>('正在读取当前状态...');
 
   useBodyClass('admin-route');
-  usePageMeta('管理台', 'Clark AAMS 后台概览页。');
+  usePageMeta('管理台', '珂拉课程表 后台概览页。');
 
   useEffect(() => {
     let isMounted = true;
@@ -65,7 +65,7 @@ function AdminDashboardPage() {
 
       if (aiResult.status === 'fulfilled') {
         const aiConfig = aiResult.value as IAdminAiConfigType;
-        setAiState(aiConfig.apiKeyConfigured ? '已配置' : '未配置 API Key');
+        setAiState(aiConfig.apiKeyConfigured ? '已保存' : '还没有填写访问密钥');
       } else {
         setAiState('不可用');
       }
@@ -74,7 +74,7 @@ function AdminDashboardPage() {
         const emailConfig = emailResult.value as IAdminEmailConfigType;
         setEmailState(
           !emailConfig.apiKeyConfigured
-            ? '未配置密钥'
+            ? '还没有填写访问密钥'
             : emailConfig.enabled
               ? '已启用'
               : '已配置未启用',
@@ -103,7 +103,7 @@ function AdminDashboardPage() {
 
   return (
     <AdminLayout
-      title='Clark AAMS 管理台'
+      title='珂拉课程表 管理台'
       description='学校适配器、客户端版本、AI 识别和取件码的统一后台入口。'
       activeKey='dashboard'
       badgeText={badgeText}
@@ -150,7 +150,7 @@ function AdminDashboardPage() {
           <div className={styles.panelHead}>
             <div>
               <h2>模块状态</h2>
-              <p>实时读取后台接口</p>
+              <p>显示当前的运行状态</p>
             </div>
           </div>
           <div className={styles.panelBody}>
@@ -168,7 +168,7 @@ function AdminDashboardPage() {
               <article className={styles.statusItem}>
                 <span>AI 识别配置</span>
                 <strong>{aiState}</strong>
-                <p>视觉模型和 API Key 状态。</p>
+                <p>识别模型与访问密钥的当前状态。</p>
               </article>
               <article className={styles.statusItem}>
                 <span>邮箱验证配置</span>

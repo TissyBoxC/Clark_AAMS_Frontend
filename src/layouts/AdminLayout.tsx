@@ -54,10 +54,10 @@ function AdminLayout({
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar} aria-label='管理台菜单'>
-        <a className={styles.sidebarHead} href='/admin/dashboard' aria-label='Clark AAMS 管理台'>
+        <a className={styles.sidebarHead} href='/admin/dashboard' aria-label='珂拉课程表 管理台'>
           <img src='/site/logo.png' alt='' />
           <span className={styles.brandLockup}>
-            <strong>Clark AAMS</strong>
+            <strong>珂拉课程表</strong>
             <small>Operations</small>
           </span>
         </a>

@@ -10,6 +10,7 @@ import LoadingView from '../../components/LoadingView';
 import { useBodyClass } from '../../hooks/useBodyClass';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
+import { userMessageFor } from '../../constants/error-codes';
 
 interface ICollectedSessionType {
   html: string;
@@ -86,13 +87,13 @@ function collectorScriptFor(school: ISchoolType): string {
       });
       const payload = await response.json();
       if (!response.ok || !payload || payload.code !== 0) {
-        throw new Error(payload && payload.message ? payload.message : "课表解析失败");
+        throw new Error(payload && payload.message ? payload.message : "这次没有解析出课表");
       }
       const code = payload.data && payload.data.pickupCode ? payload.data.pickupCode : "";
-      alert("解析完成，取件码：" + code);
+      alert("课表已解析。取件码：" + code + "，可以在「取件码」页凭它取回课表。");
       button.textContent = "解析完成";
     } catch (error) {
-      alert(error.message || "课表解析失败");
+      alert(userMessageFor(error));
       button.textContent = "Clark 开始解析";
       button.disabled = false;
     }
@@ -160,7 +161,7 @@ function CourseImportPage() {
   const [collectedSession, setCollectedSession] = useState<ICollectedSessionType | null>(null);
 
   useBodyClass('course-import-page');
-  usePageMeta('教务导入', '读取学校登录页和课表 HTML，提交后端完成课程解析与取件码生成。');
+  usePageMeta('教务导入', '登录学校教务后读取课表，生成取件码方便在其他设备取回。');
 
   const setStatus = useCallback((message: string, isError = false): void => {
     setStatusMessage(message);
@@ -195,7 +196,7 @@ function CourseImportPage() {
       }
 
       setIsParsing(true);
-      setStatus('正在提交后端解析...');
+      setStatus('正在解析课表...');
 
       try {
         const data = await parseSchoolCourseImport(school.id, loginSession);
@@ -203,7 +204,7 @@ function CourseImportPage() {
         setResultJson(JSON.stringify(data.courses || [], null, 2));
         setStatus(`解析完成，共 ${Array.isArray(data.courses) ? data.courses.length : 0} 门课程。取件码：${data.pickupCode || '未返回'}`);
       } catch (error) {
-        setStatus(error instanceof Error ? error.message : '课表解析失败', true);
+        setStatus(userMessageFor(error), true);
       } finally {
         setIsParsing(false);
       }
@@ -227,7 +228,7 @@ function CourseImportPage() {
         }
       } catch (error) {
         if (isMounted) {
-          setStatus(error instanceof Error ? error.message : '学校配置读取失败', true);
+          setStatus(userMessageFor(error), true);
         }
       }
     }
@@ -325,7 +326,7 @@ function CourseImportPage() {
           <a className='brand' href='/' aria-label='返回首页'>
             <img src='/site/logo.png' alt='' />
             <span className='brand-lockup'>
-              <strong className='brand-title'>Clark AAMS</strong>
+              <strong className='brand-title'>珂拉课程表</strong>
               <small className='brand-domain'>clarkhub.cn</small>
             </span>
           </a>

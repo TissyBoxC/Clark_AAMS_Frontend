@@ -7,6 +7,7 @@ import UserWorkspaceShell from '../../components/UserWorkspaceShell';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
 import { copyText } from '../../utils/clipboard';
+import { userMessageFor } from '../../constants/error-codes';
 
 function UserRecognitionPage() {
   const { user, isReady } = useRequiredVerifiedUser();
@@ -102,9 +103,9 @@ function UserRecognitionPage() {
       }
 
       setToolState(
-        error instanceof Error ? error.message : '识别失败。',
+        userMessageFor(error),
         '',
-        '请确认 AI 后端可用，再使用清晰的课表截图重试。',
+        '识别服务暂时没有响应，请稍后再用清晰的课表截图重试。',
       );
       setProgress(0);
       setCourseJson('');

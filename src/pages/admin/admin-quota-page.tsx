@@ -13,6 +13,7 @@ import {
 } from '../../utils/quota-dashboard.ts';
 
 import styles from './admin-pages.module.css';
+import { userMessageFor } from '../../constants/error-codes';
 
 /**
  * 配额看板（P5-4）。
@@ -50,7 +51,7 @@ function AdminQuotaPage() {
       setDashboard(null);
       setStatus('读取失败');
       setErrorMessage(
-        error instanceof Error ? error.message : '无法读取配额数据',
+        userMessageFor(error),
       );
     }
     void announce;

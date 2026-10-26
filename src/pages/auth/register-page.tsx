@@ -18,6 +18,7 @@ import { usePageMeta } from '../../hooks/usePageMeta';
 import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 import { useAuthStore } from '../../store/auth-context';
 import { safeRedirect } from '../../utils/navigation';
+import { userMessageFor } from '../../constants/error-codes';
 
 function RegisterPage() {
   const location = useLocation();
@@ -34,7 +35,7 @@ function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useBodyClass('auth-page');
-  usePageMeta('注册', 'Clark AAMS 用户注册页，注册成功后自动生成登录码并进入用户中心。');
+  usePageMeta('注册', '珂拉课程表 用户注册页，注册成功后自动生成登录码并进入用户中心。');
 
   const redirectUrl = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -86,7 +87,7 @@ function RegisterPage() {
         replace: true,
       });
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : '注册失败');
+      setStatusMessage(userMessageFor(error));
     } finally {
       setIsSubmitting(false);
     }

@@ -9,6 +9,7 @@ import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 import { safeRedirect } from '../../utils/navigation';
 
 import styles from './admin-pages.module.css';
+import { userMessageFor } from '../../constants/error-codes';
 
 function AdminLoginPage() {
   const location = useLocation();
@@ -20,7 +21,7 @@ function AdminLoginPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useBodyClass('admin-route');
-  usePageMeta('后台登录', 'Clark AAMS 后台登录页。');
+  usePageMeta('后台登录', '珂拉课程表 后台登录页。');
 
   const redirectUrl = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -45,7 +46,7 @@ function AdminLoginPage() {
         }
       } catch (error) {
         if (isMounted) {
-          setStatusMessage(error instanceof Error ? error.message : '初始化状态读取失败');
+          setStatusMessage(userMessageFor(error));
         }
       } finally {
         if (isMounted) {
@@ -78,7 +79,7 @@ function AdminLoginPage() {
       const loginResult = await adminLogin(normalizedUsername, password);
 
       if (!loginResult.authenticated) {
-        setStatusMessage('登录接口返回成功，但 authenticated=false。请检查响应 JSON / Session 写入逻辑。');
+        setStatusMessage('登录没有完成。请重新输入密码再试一次；如果还是这样，联系维护的同学。');
         return;
       }
 
@@ -86,7 +87,7 @@ function AdminLoginPage() {
         replace: true,
       });
     } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : '登录失败');
+      setStatusMessage(userMessageFor(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -103,7 +104,7 @@ function AdminLoginPage() {
           <a className={styles.adminAuthBrand} href='/'>
             <img src='/site/logo.png' alt='' />
             <span>
-              <strong>Clark AAMS</strong>
+              <strong>珂拉课程表</strong>
                 <small>后台运维</small>
             </span>
           </a>
@@ -123,7 +124,7 @@ function AdminLoginPage() {
         <div className={styles.panelHead}>
           <div>
             <p className={styles.eyebrow}>后台入口</p>
-            <h2>Clark AAMS 后台登录</h2>
+            <h2>珂拉课程表 后台登录</h2>
             <p>登录后进入学校适配器、版本管理、AI 配置和取件码后台。</p>
           </div>
         </div>

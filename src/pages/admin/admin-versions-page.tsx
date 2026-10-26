@@ -10,6 +10,7 @@ import { usePageMeta } from '../../hooks/usePageMeta';
 import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 
 import styles from './admin-pages.module.css';
+import { userMessageFor } from '../../constants/error-codes';
 
 const EMPTY_VERSION_CONFIG: IAdminAppVersionConfigType = {
   latestVersion: '',
@@ -128,7 +129,7 @@ function AdminVersionsPage() {
   const isConfigEditable = Boolean(savedConfig) && !isSaving;
 
   useBodyClass('admin-route');
-  usePageMeta('客户端版本管理', '维护 Clark AAMS 客户端版本配置、下载源与版本校验。');
+  usePageMeta('客户端版本管理', '维护 珂拉课程表 客户端版本配置、下载源与版本校验。');
 
   const loadConfig = useCallback(async (): Promise<void> => {
     setConfigLoadState('loading');
@@ -145,14 +146,14 @@ function AdminVersionsPage() {
       setConfigLoadState('error');
 
       if (isUnauthorizedError(error)) {
-        setSaveStatus('后台登录会话已失效，请重新登录后查看版本配置。');
+        setSaveStatus('登录已过期，请重新登录后再查看版本信息。');
         navigate('/admin/login?redirect=%2Fadmin%2Fversions', {
           replace: true,
         });
         return;
       }
 
-      setSaveStatus(error instanceof Error ? error.message : '配置读取失败');
+      setSaveStatus(userMessageFor(error));
     }
   }, [navigate]);
 
@@ -192,14 +193,14 @@ function AdminVersionsPage() {
       setSaveStatus(`配置已部分保存：${Object.keys(patch).join('、')}`);
     } catch (error) {
       if (isUnauthorizedError(error)) {
-        setSaveStatus('后台登录会话已失效，请重新登录后保存版本配置。');
+        setSaveStatus('登录已过期，请重新登录后再保存版本信息。');
         navigate('/admin/login?redirect=%2Fadmin%2Fversions', {
           replace: true,
         });
         return;
       }
 
-      setSaveStatus(error instanceof Error ? error.message : '配置保存失败');
+      setSaveStatus(userMessageFor(error));
     } finally {
       setIsSaving(false);
     }
@@ -214,7 +215,7 @@ function AdminVersionsPage() {
       setCheckResult(result);
       setCheckStatus('版本校验完成');
     } catch (error) {
-      setCheckStatus(error instanceof Error ? error.message : '版本校验失败');
+      setCheckStatus(userMessageFor(error));
       setCheckResult(null);
     }
   }
@@ -224,7 +225,7 @@ function AdminVersionsPage() {
       title='客户端版本管理'
       description='维护最新版本、最低支持版本、更新文案与下载源。'
       activeKey='versions'
-      badgeText={config.latestVersion ? `v${config.latestVersion}` : '未配置'}
+      badgeText={config.latestVersion ? `v${config.latestVersion}` : '待发布'}
     >
       <div className={styles.pageGrid}>
         <section className={styles.panel}>
@@ -243,7 +244,7 @@ function AdminVersionsPage() {
             {!savedConfig ? (
               <div className={styles.emptyState}>
                 {configLoadState === 'loading'
-                  ? '正在通过后台登录会话读取当前版本配置...'
+                  ? '正在读取版本信息...'
                   : '尚未读取到当前版本配置。请确认已登录后台后点击“重新读取”。'}
               </div>
             ) : (
@@ -251,22 +252,22 @@ function AdminVersionsPage() {
                 <div className={styles.statusGrid}>
                   <article className={styles.statusItem}>
                     <span>最新版本</span>
-                    <strong>{savedConfig.latestVersion ? `${savedConfig.latestVersion} (${savedConfig.latestBuild})` : '未配置'}</strong>
+                    <strong>{savedConfig.latestVersion ? `${savedConfig.latestVersion} (${savedConfig.latestBuild})` : '还没有发布过版本'}</strong>
                     <p>客户端发现高于当前版本时会提示更新。</p>
                   </article>
                   <article className={styles.statusItem}>
                     <span>最低支持</span>
-                    <strong>{savedConfig.minimumSupportedVersion ? `${savedConfig.minimumSupportedVersion} (${savedConfig.minimumSupportedBuild})` : '未配置'}</strong>
+                    <strong>{savedConfig.minimumSupportedVersion ? `${savedConfig.minimumSupportedVersion} (${savedConfig.minimumSupportedBuild})` : '还没有设置最低版本'}</strong>
                     <p>低于该版本时会触发强制更新。</p>
                   </article>
                   <article className={styles.statusItem}>
                     <span>更新标题</span>
-                    <strong>{savedConfig.title || '未配置'}</strong>
+                    <strong>{savedConfig.title || '还没有填写标题'}</strong>
                     <p>{savedConfig.optionalUpdateMessage || '暂无可选更新文案'}</p>
                   </article>
                   <article className={styles.statusItem}>
                     <span>发布页</span>
-                    <strong>{savedConfig.releasePageUrl || '未配置'}</strong>
+                    <strong>{savedConfig.releasePageUrl || '还没有填写下载页地址'}</strong>
                     <p>{savedConfig.requiredUpdateMessage || '暂无强制更新文案'}</p>
                   </article>
                 </div>
@@ -282,7 +283,7 @@ function AdminVersionsPage() {
                       <div key={`${source.type}-${source.url}-${index}`} className={styles.sourceCard}>
                         <span className={styles.codeTag}>{source.primary ? '主源' : source.type || 'source'}</span>
                         <strong>{source.label || '未命名下载源'}</strong>
-                        <p className={styles.statusText}>{source.url || '未配置地址'}</p>
+                        <p className={styles.statusText}>{source.url || '还没有填写下载地址'}</p>
                         <p className={styles.statusText}>{source.description || '暂无说明'}</p>
                       </div>
                     ))}

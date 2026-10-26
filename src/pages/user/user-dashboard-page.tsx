@@ -17,7 +17,7 @@ function UserDashboardPage() {
   const [accountStatus, setAccountStatus] = useState<string>('');
   const [accountStatusVariant, setAccountStatusVariant] = useState<'success' | 'error' | ''>('');
 
-  usePageMeta('用户中心', '查看 Clark AAMS 账户状态，并进入教务导入、课表识别和使用指南。');
+  usePageMeta('用户中心', '查看 珂拉课程表 账户状态，并进入教务导入、课表识别和使用指南。');
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -42,7 +42,7 @@ function UserDashboardPage() {
       setAccountStatus('登录码已复制。');
       setAccountStatusVariant('success');
     } catch {
-      setAccountStatus('复制失败，请稍后重试。');
+      setAccountStatus('没能复制，请选中账号手动复制。');
       setAccountStatusVariant('error');
     }
   }
@@ -100,7 +100,7 @@ function UserDashboardPage() {
                     <span>邮箱状态</span>
                     <strong id='metric-email-state'>{isVerified ? '已验证' : '未验证'}</strong>
                     <small id='metric-email-copy'>
-                      {isVerified ? '验证提示已关闭' : '验证完成后即可解锁功能菜单'}
+                      {isVerified ? '验证提示已关闭' : '验证通过后显示全部功能'}
                     </small>
                   </div>
                 </div>

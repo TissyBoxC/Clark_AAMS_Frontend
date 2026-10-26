@@ -6,6 +6,7 @@ import {
   type IQuestionAnalysisResultType,
 } from '../../api/question-api';
 import { HttpError } from '../../api/http';
+import { defaultMessageFor, userMessageFor } from '../../constants/error-codes';
 import LoadingView from '../../components/LoadingView';
 import SupportFab from '../../components/SupportFab';
 import UserWorkspaceShell from '../../components/UserWorkspaceShell';
@@ -92,16 +93,16 @@ function UserQuestionsPage() {
       // 用统一的错误分类决定提示措辞（P2-3）
       if (error instanceof HttpError) {
         if (error.kind === 'quota') {
-          setStatusMessage('今日解析额度已用完，请明天再试。');
+          setStatusMessage(defaultMessageFor('quota'));
         } else if (error.kind === 'rateLimit') {
-          setStatusMessage('操作过于频繁，请稍后再试。');
+          setStatusMessage('操作有点快，等一分钟再试。');
         } else if (error.kind === 'auth') {
-          setStatusMessage('登录状态已过期，请重新登录。');
+          setStatusMessage('登录已过期，请重新登录后再试。');
         } else {
-          setStatusMessage(error.message || '解析失败，请稍后重试。');
+          setStatusMessage(userMessageFor(error));
         }
       } else {
-        setStatusMessage(error instanceof Error ? error.message : '解析失败，请稍后重试。');
+        setStatusMessage(userMessageFor(error));
       }
 
       setResult(null);

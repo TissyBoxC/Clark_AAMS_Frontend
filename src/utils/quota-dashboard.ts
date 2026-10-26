@@ -155,5 +155,5 @@ export function describeLimitation(dashboard: IQuotaDashboardType): string {
   }
   return dashboard.inMemoryOnly
     ? '统计来自服务内存，进程重启后归零。'
-    : '统计范围请参考后端说明。';
+    : '按当天的使用情况统计。';
 }

@@ -23,7 +23,7 @@ function AdminEntryPage() {
   const navigate = useTransitionNavigate();
 
   useBodyClass('admin-route');
-  usePageMeta('后台入口', 'Clark AAMS 后台入口。');
+  usePageMeta('后台入口', '珂拉课程表 后台入口。');
 
   useEffect(() => {
     navigate('/admin/dashboard', { replace: true, delay: 0 });

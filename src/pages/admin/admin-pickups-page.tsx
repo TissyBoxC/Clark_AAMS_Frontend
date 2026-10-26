@@ -11,6 +11,7 @@ import { copyText } from '../../utils/clipboard';
 import { formatJson } from '../../utils/json';
 
 import styles from './admin-pages.module.css';
+import { userMessageFor } from '../../constants/error-codes';
 
 function buildPickupImageUrl(code: string, fileName: string): string {
   return buildApiUrl(`/api/v1/admin/course-pickups/${encodeURIComponent(code)}/images/${encodeURIComponent(fileName)}`);
@@ -38,7 +39,7 @@ function AdminPickupsPage() {
       setListStatus(`已加载 ${nextRecords.length} 条记录`);
     } catch (error) {
       setRecords([]);
-      setListStatus(error instanceof Error ? error.message : '记录读取失败');
+      setListStatus(userMessageFor(error));
     }
   }
 
@@ -54,7 +55,7 @@ function AdminPickupsPage() {
     } catch (error) {
       setSelectedRecord(null);
       setDetailJsonText('');
-      setDetailStatus(error instanceof Error ? error.message : '详情读取失败');
+      setDetailStatus(userMessageFor(error));
     }
   }
 
@@ -80,7 +81,7 @@ function AdminPickupsPage() {
       await loadRecords();
       await loadDetail(result.code);
     } catch (error) {
-      setManualStatus(error instanceof Error ? error.message : '手动创建失败');
+      setManualStatus(userMessageFor(error));
     }
   }
 
@@ -97,7 +98,7 @@ function AdminPickupsPage() {
       setDetailStatus('JSON 保存成功');
       await loadDetail(selectedRecord.code);
     } catch (error) {
-      setDetailStatus(error instanceof Error ? error.message : 'JSON 保存失败');
+      setDetailStatus(userMessageFor(error));
     }
   }
 
@@ -114,7 +115,7 @@ function AdminPickupsPage() {
       setDetailStatus('记录已删除');
       await loadRecords();
     } catch (error) {
-      setDetailStatus(error instanceof Error ? error.message : '删除记录失败');
+      setDetailStatus(userMessageFor(error));
     }
   }
 
@@ -127,7 +128,7 @@ function AdminPickupsPage() {
       await deleteAdminCoursePickupImage(selectedRecord.code, fileName);
       await loadDetail(selectedRecord.code);
     } catch (error) {
-      setDetailStatus(error instanceof Error ? error.message : '删除图片失败');
+      setDetailStatus(userMessageFor(error));
     }
   }
 

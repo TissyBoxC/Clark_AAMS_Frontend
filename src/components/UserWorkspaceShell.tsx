@@ -7,6 +7,7 @@ import { useTransitionNavigate } from '../hooks/useTransitionNavigate';
 import { useAuthStore } from '../store/auth-context';
 import type { IUserType } from '../types/app-types';
 import { qqAvatarUrl } from '../utils/avatar';
+import { userMessageFor } from '../constants/error-codes';
 
 interface IUserWorkspaceShellProps {
   user: IUserType;
@@ -212,7 +213,7 @@ function UserWorkspaceShell({
         replace: true,
       });
     } catch (error) {
-      setShellStatus(error instanceof Error ? error.message : '退出登录失败，请稍后重试。');
+      setShellStatus(userMessageFor(error));
       setShellStatusVariant('error');
     }
   }
@@ -223,7 +224,7 @@ function UserWorkspaceShell({
         <a className='dashboard-brand' href='/' onClick={(event) => handleNavigate(event, '/')}>
           <img src='/site/logo.png' alt='' />
           <span className='brand-lockup'>
-            <strong className='brand-title'>Clark AAMS</strong>
+            <strong className='brand-title'>珂拉课程表</strong>
             <small className='brand-domain'>clarkhub.cn</small>
           </span>
         </a>

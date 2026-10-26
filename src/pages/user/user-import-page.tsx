@@ -8,6 +8,7 @@ import { usePageMeta } from '../../hooks/usePageMeta';
 import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
 import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 import type { ISchoolType } from '../../types/app-types';
+import { userMessageFor } from '../../constants/error-codes';
 
 function UserImportPage() {
   const navigate = useTransitionNavigate();
@@ -33,7 +34,7 @@ function UserImportPage() {
         }
       } catch (error) {
         if (isMounted) {
-          setStatusMessage(error instanceof Error ? error.message : '学校列表读取失败。');
+          setStatusMessage(userMessageFor(error));
         }
       }
     }
@@ -124,7 +125,7 @@ function UserImportPage() {
             </div>
 
             <div className={`form-status${statusMessage ? ' error' : ''}`} id='import-school-status'>
-              {statusMessage || '如果没有看到你的学校，说明当前后端暂未提供对应适配器。'}
+              {statusMessage || '如果没有你的学校，说明这所学校还没有接进来。可以先用图片识别导入课表。'}
             </div>
           </section>
         </div>

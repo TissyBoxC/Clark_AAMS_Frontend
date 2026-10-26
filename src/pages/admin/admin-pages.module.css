@@ -15,7 +15,7 @@
   padding: 18px;
   border: 1px solid var(--admin-line);
   border-radius: 1.35rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
 }
 
 .opsRail span {
@@ -49,9 +49,9 @@
   border: 1px solid var(--admin-line);
   border-radius: 1.6rem;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    linear-gradient(180deg, var(--admin-panel), var(--admin-panel)),
     var(--admin-panel);
-  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-md);
 }
 
 .panelHead {
@@ -132,7 +132,7 @@
   padding: 16px;
   border: 1px solid var(--admin-line);
   border-radius: 1.15rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
 }
 
 .heroMetric span,
@@ -157,7 +157,7 @@
   padding: 18px;
   border: 1px solid var(--admin-line);
   border-radius: 1.15rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
 }
 
 .statusItem span,
@@ -221,7 +221,7 @@
   border: 1px solid var(--admin-line);
   border-radius: 0.95rem;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
   color: var(--admin-text);
   font: inherit;
 }
@@ -244,7 +244,7 @@
   padding: 10px 12px;
   border: 1px solid var(--admin-line);
   border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
   color: var(--admin-muted);
   font-weight: 700;
 }
@@ -266,14 +266,15 @@
 
 .button {
   background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
-  color: oklch(0.16 0.02 250);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+  /* 白字：粉色底上用深色字会显脏，白字在 #c93c7d 上是 4.74:1，达标 */
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(201, 60, 125, 0.22);
 }
 
 .buttonSecondary {
   border-color: var(--admin-line);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--admin-text);
+  background: #ffffff;
+  color: var(--admin-primary);
 }
 
 .buttonDanger {
@@ -320,7 +321,7 @@
   padding: 14px 16px;
   border: 1px solid var(--admin-line);
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
   text-align: left;
   cursor: pointer;
 }
@@ -377,7 +378,7 @@
   padding: 16px;
   border: 1px solid var(--admin-line);
   border-radius: 1.15rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
 }
 
 .authShell {
@@ -405,7 +406,7 @@
   background:
     radial-gradient(circle at top left, rgba(125, 216, 169, 0.18), transparent 20rem),
     radial-gradient(circle at bottom right, rgba(235, 177, 92, 0.12), transparent 20rem),
-    rgba(255, 255, 255, 0.04);
+    var(--admin-panel);
 }
 
 .adminAuthStory h1 {
@@ -464,7 +465,7 @@
   padding: 0 12px;
   border: 1px solid var(--admin-line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--admin-panel);
   color: var(--admin-muted);
   font-size: 0.82rem;
   font-weight: 800;
@@ -488,7 +489,7 @@
   padding: 12px 14px;
   border: 1px solid var(--admin-line);
   border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--admin-panel);
   color: var(--admin-muted);
 }
 

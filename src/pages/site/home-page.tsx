@@ -10,7 +10,7 @@ function HomePage() {
   const { isAuthResolved, user } = useAuthStore();
 
   useBodyClass('home-page');
-  usePageMeta('Clark AAMS 官网', 'Clark AAMS 提供课表导入、截图识别与取件码回查。');
+  usePageMeta('珂拉课程表 官网', '珂拉课程表 提供课表导入、截图识别与取件码回查。');
 
   const isLoggedIn = isAuthResolved && user.id > 0;
   const userHref = isLoggedIn ? '/user' : '/login';
@@ -26,7 +26,7 @@ function HomePage() {
         <section className='page-shell home-hero home-hero--official'>
           <div className='hero-copy'>
             <img className='hero-mark' src='/site/logo.png' alt='' />
-            <h1 className='hero-title'>Clark AAMS</h1>
+            <h1 className='hero-title'>珂拉课程表</h1>
             <p>导入教务课表，识别截图课程，用取件码找回结果。适合学生快速整理自己的课程表。</p>
             <div className='hero-chips' aria-label='产品特点'>
               <span className='hero-chip stable'>教务导入</span>
@@ -66,7 +66,7 @@ function HomePage() {
         <section className='section-shell home-section' id='capabilities'>
           <div className='section-heading'>
             <p className='eyebrow'>Features</p>
-            <h2>三个入口，覆盖常见课表整理场景。</h2>
+            <h2>三种方式把课表放进来看得懂的地方。</h2>
             <p>不在官网里打断操作。登录后进入用户中心，再选择导入、识别或取件码回查。</p>
           </div>
           <div className='feature-grid'>
@@ -90,8 +90,8 @@ function HomePage() {
 
         <section className='section-shell home-section home-process'>
           <div className='section-heading'>
-            <p className='eyebrow'>How it works</p>
-            <h2>进入用户中心后完成所有课表操作。</h2>
+            <p className='eyebrow'>使用方式</p>
+            <h2>登录后，课表、导入和识别都在同一个地方。</h2>
           </div>
           <div className='home-process-grid'>
             <article className='surface-card home-process-step'>
@@ -115,7 +115,7 @@ function HomePage() {
       </main>
 
       <PageFooter
-        leftText='Clark AAMS'
+        leftText='珂拉课程表'
         middleText='大学生课程表导入与识别工具'
         rightHref='https://github.com/TissyBoxC/Clark_AAMS'
         rightLabel='GitHub'

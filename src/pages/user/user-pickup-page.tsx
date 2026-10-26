@@ -7,6 +7,7 @@ import UserWorkspaceShell from '../../components/UserWorkspaceShell';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
 import { copyText } from '../../utils/clipboard';
+import { userMessageFor } from '../../constants/error-codes';
 
 function UserPickupPage() {
   const { user, isReady } = useRequiredVerifiedUser();
@@ -20,7 +21,7 @@ function UserPickupPage() {
   const [copyStatusVariant, setCopyStatusVariant] = useState<'success' | 'error' | ''>('');
   const [isLookingUp, setIsLookingUp] = useState<boolean>(false);
 
-  usePageMeta('取件码回查', '通过 8 位取件码回查 Clark AAMS 已保存的课程 JSON。');
+  usePageMeta('取件码回查', '通过 8 位取件码回查 珂拉课程表 已保存的课程 JSON。');
 
   const currentUserLabel = user.username || `用户 ${user.id}`;
 
@@ -59,7 +60,7 @@ function UserPickupPage() {
       setCourseJson(JSON.stringify(result, null, 2));
     } catch (error) {
       setToolState(
-        error instanceof Error ? error.message : '回查失败。',
+        userMessageFor(error),
         normalizedCode,
         '请确认取件码填写正确，且对应记录仍保存在服务器中。',
       );
