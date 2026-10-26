@@ -109,14 +109,14 @@ function AdminLoginPage() {
             </span>
           </a>
           <div>
-            <p className={styles.eyebrow}>安全控制台</p>
-            <h1>后台登录被设计成明确、低噪音、可恢复的运维入口。</h1>
-            <p className={styles.statusText}>这里进入学校适配器、版本策略、AI 识别和取件码记录等高风险模块，因此视觉上采用深色控制台并强化状态文案。</p>
+            <p className={styles.eyebrow}>管理员登录</p>
+            <h1>登录管理台</h1>
+            <p className={styles.statusText}>管理台可以查看学校列表、发布版本、调整识别设置和取件码记录。这些操作会影响所有用户，请只在自己确认的情况下修改。</p>
           </div>
           <div className={styles.adminAuthSignals}>
-              <span>初始化检查</span>
-              <span>会话 Cookie</span>
-              <span>运维就绪</span>
+              <span>首次设置</span>
+              <span>登录状态</span>
+              <span>环境正常</span>
           </div>
         </aside>
 

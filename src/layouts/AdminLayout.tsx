@@ -91,7 +91,7 @@ function AdminLayout({
           </a>
           <a className={styles.navLink} href='/api'>
             <span className={styles.navIcon}>API</span>
-            <span>接口文档</span>
+            <span>开发文档</span>
           </a>
         </div>
       </aside>

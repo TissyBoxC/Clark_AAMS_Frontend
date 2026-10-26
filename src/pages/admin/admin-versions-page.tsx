@@ -263,33 +263,33 @@ function AdminVersionsPage() {
                   <article className={styles.statusItem}>
                     <span>更新标题</span>
                     <strong>{savedConfig.title || '还没有填写标题'}</strong>
-                    <p>{savedConfig.optionalUpdateMessage || '暂无可选更新文案'}</p>
+                    <p>{savedConfig.optionalUpdateMessage || '还没有填写可选更新提示'}</p>
                   </article>
                   <article className={styles.statusItem}>
                     <span>发布页</span>
                     <strong>{savedConfig.releasePageUrl || '还没有填写下载页地址'}</strong>
-                    <p>{savedConfig.requiredUpdateMessage || '暂无强制更新文案'}</p>
+                    <p>{savedConfig.requiredUpdateMessage || '还没有填写强制更新提示'}</p>
                   </article>
                 </div>
 
                 <div className={styles.stack}>
                   <div className={styles.statusBox}>
                     <strong>发布说明</strong>
-                    <p>{toReleaseNotesArray(savedConfig.releaseNotes).join(' / ') || '暂无发布说明'}</p>
+                    <p>{toReleaseNotesArray(savedConfig.releaseNotes).join(' / ') || '还没有填写发布说明'}</p>
                   </div>
                   <div className={styles.sourceList}>
-                    {savedConfig.downloadSources.length === 0 ? <div className={styles.emptyState}>当前没有下载源。</div> : null}
+                    {savedConfig.downloadSources.length === 0 ? <div className={styles.emptyState}>还没有添加下载地址。</div> : null}
                     {savedConfig.downloadSources.map((source, index) => (
                       <div key={`${source.type}-${source.url}-${index}`} className={styles.sourceCard}>
                         <span className={styles.codeTag}>{source.primary ? '主源' : source.type || 'source'}</span>
                         <strong>{source.label || '未命名下载源'}</strong>
                         <p className={styles.statusText}>{source.url || '还没有填写下载地址'}</p>
-                        <p className={styles.statusText}>{source.description || '暂无说明'}</p>
+                        <p className={styles.statusText}>{source.description || '还没有填写说明'}</p>
                       </div>
                     ))}
                   </div>
                   <label className={styles.field}>
-                    <span>当前后端配置 JSON</span>
+                    <span>当前配置原文（可复制备份）</span>
                     <textarea className={styles.textarea} value={currentConfigPreview} readOnly></textarea>
                   </label>
                 </div>
@@ -301,8 +301,8 @@ function AdminVersionsPage() {
         <section className={styles.panel}>
           <div className={styles.panelHead}>
             <div>
-              <h2>可视化模块修改</h2>
-              <p>按版本策略、更新文案、发布信息和下载源分模块维护；保存时仅提交已修改字段。</p>
+              <h2>修改版本配置</h2>
+              <p>分模块修改版本策略、提示文案、发布信息和下载地址。保存时只提交改动过的字段。</p>
             </div>
             <div className={styles.actions}>
               <button className={styles.buttonSecondary} type='button' onClick={() => void loadConfig()}>
@@ -327,7 +327,7 @@ function AdminVersionsPage() {
                       <input className={styles.input} required value={config.latestVersion} onChange={(event) => setConfig((previous) => ({ ...previous, latestVersion: event.target.value }))} />
                     </label>
                     <label className={styles.field}>
-                      <span>最新 Build</span>
+                      <span>最新构建号</span>
                       <input className={styles.input} type='number' min={0} required value={config.latestBuild} onChange={(event) => setConfig((previous) => ({ ...previous, latestBuild: Number(event.target.value) }))} />
                     </label>
                   </div>
@@ -337,7 +337,7 @@ function AdminVersionsPage() {
                       <input className={styles.input} required value={config.minimumSupportedVersion} onChange={(event) => setConfig((previous) => ({ ...previous, minimumSupportedVersion: event.target.value }))} />
                     </label>
                     <label className={styles.field}>
-                      <span>最低支持 Build</span>
+                      <span>最低支持构建号</span>
                       <input className={styles.input} type='number' min={0} required value={config.minimumSupportedBuild} onChange={(event) => setConfig((previous) => ({ ...previous, minimumSupportedBuild: Number(event.target.value) }))} />
                     </label>
                   </div>
@@ -394,7 +394,7 @@ function AdminVersionsPage() {
                     </button>
                   </div>
                   <div className={styles.sourceList}>
-                    {config.downloadSources.length === 0 ? <div className={styles.emptyState}>当前没有下载源。</div> : null}
+                    {config.downloadSources.length === 0 ? <div className={styles.emptyState}>还没有添加下载地址。</div> : null}
                     {config.downloadSources.map((source, index) => (
                       <div key={`${source.type}-${source.label}-${index}`} className={styles.sourceCard}>
                         <div className={styles.formGridTwo}>
@@ -465,7 +465,7 @@ function AdminVersionsPage() {
                   <input className={styles.input} required value={checkForm.currentVersion} onChange={(event) => setCheckForm((previous) => ({ ...previous, currentVersion: event.target.value }))} />
                 </label>
                 <label className={styles.field}>
-                  <span>当前 Build</span>
+                  <span>当前构建号</span>
                   <input className={styles.input} type='number' min={0} value={checkForm.currentBuild} onChange={(event) => setCheckForm((previous) => ({ ...previous, currentBuild: Number(event.target.value) }))} />
                 </label>
               </div>

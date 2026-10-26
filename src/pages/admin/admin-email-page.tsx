@@ -57,7 +57,7 @@ function AdminEmailPage() {
 
   const currentStatus = useMemo(() => {
     if (!config.apiKeyConfigured) {
-      return '未配置密钥或 SMTP 授权码';
+      return '还没有填写授权码';
     }
 
     return config.enabled ? '已配置并启用邮箱验证码发送' : '已配置但当前未启用';
@@ -146,7 +146,7 @@ function AdminEmailPage() {
                 <input className={styles.input} placeholder='例如 珂拉课程表 QQ 邮箱验证码' value={config.verificationSubject} onChange={(event) => setConfig((previous) => ({ ...previous, verificationSubject: event.target.value }))} />
               </label>
               <label className={styles.field}>
-                <span>API Key / SMTP 授权码</span>
+                <span>授权码</span>
                 <input className={styles.input} type='password' autoComplete='new-password' placeholder='留空表示保留已有值' value={apiKey} onChange={(event) => setApiKey(event.target.value)} />
               </label>
               <label className={styles.check}>
@@ -173,7 +173,7 @@ function AdminEmailPage() {
           <div className={styles.panelHead}>
             <div>
               <h2>当前状态</h2>
-              <p>读取后端保存的邮件发送能力与密钥状态。</p>
+              <p>这里是当前邮件发送设置的状态。</p>
             </div>
           </div>
           <div className={styles.panelBody}>
@@ -185,11 +185,11 @@ function AdminEmailPage() {
               </div>
               <div className={styles.metric}>
                 <span>发件邮箱</span>
-                <strong>{config.senderAddress || '未设置'}</strong>
+                <strong>{config.senderAddress || '还没有填写'}</strong>
               </div>
               <div className={styles.metric}>
                 <span>发件名称</span>
-                <strong>{config.senderName || '未设置'}</strong>
+                <strong>{config.senderName || '还没有填写'}</strong>
               </div>
             </div>
             <p className={styles.hint}>常见方案：QQ 邮箱使用 SMTP 授权码；如果走自定义 HTTP Provider，可将 endpoint 配置为自建邮件网关地址。</p>

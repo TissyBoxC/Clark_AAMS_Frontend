@@ -86,7 +86,7 @@ function AdminSchoolsPage() {
           <div className={styles.panelHead}>
             <div>
               <h2>当前学校</h2>
-              <p>读取 /api/v1/schools 的现有配置。</p>
+              <p>这里列出已经接入的学校。</p>
             </div>
             <div className={styles.actions}>
               <button className={styles.buttonSecondary} type='button' onClick={() => void loadSchools()}>
@@ -110,7 +110,7 @@ function AdminSchoolsPage() {
                 <tbody>
                   {schools.length === 0 ? (
                     <tr>
-                      <td colSpan={5}>暂无数据</td>
+                      <td colSpan={5}>还没有学校。可以新增一所，或等待自动读取。</td>
                     </tr>
                   ) : (
                     schools.map((school) => (
@@ -136,8 +136,8 @@ function AdminSchoolsPage() {
         <section className={styles.panel}>
           <div className={styles.panelHead}>
             <div>
-              <h2>生成学校脚手架</h2>
-              <p>该接口将根据表单内容生成新的学校适配器代码骨架。</p>
+              <h2>新增学校</h2>
+              <p>填好下面的信息，就能为这所学校建一个导入入口。</p>
             </div>
           </div>
           <div className={styles.panelBody}>

@@ -109,8 +109,8 @@ function AdminAiPage() {
         <section className={styles.panel}>
           <div className={styles.panelHead}>
             <div>
-              <h2>模型配置</h2>
-              <p>如果填写到 /v1，后端会自动拼接 /chat/completions。</p>
+              <h2>识别模型</h2>
+              <p>服务地址填到 /v1 就够了，具体的调用路径会自动补上。</p>
             </div>
             <span className={styles.statusText}>{saveStatus}</span>
           </div>
