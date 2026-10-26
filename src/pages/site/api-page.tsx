@@ -153,7 +153,7 @@ function ApiPage() {
         </section>
       </main>
 
-      <PageFooter leftText='珂拉课程表 API Surface' rightHref='/' rightLabel='返回首页' />
+      <PageFooter leftText='珂拉课程表 开发者文档' rightHref='/' rightLabel='返回首页' />
       <SupportFab />
     </>
   );

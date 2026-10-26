@@ -287,10 +287,10 @@ function CourseImportPage() {
 
     try {
       await copyText(script);
-      setStatus('采集脚本已复制。请在学校课表页打开控制台并粘贴运行。');
+      setStatus('已复制。这是一个进阶用法：需要你在学校课表页面里的调试窗口运行它，再把结果粘回上面的输入框。如果没有把握，直接用截图识别更省事。');
     } catch {
       setManualHtml(script);
-      setStatus('无法直接写入剪贴板，已把采集脚本放入文本框中。', true);
+      setStatus('没能自动复制，已经放进下面的输入框，可以手动全选复制。', true);
     }
   }
 
@@ -360,23 +360,23 @@ function CourseImportPage() {
 
         <section className='dashboard-column'>
           <section className='surface-card import-control-card'>
-            <p className='eyebrow'>Collector Script</p>
-            <h2>导入控制台</h2>
+            <p className='eyebrow'>进阶方式</p>
+            <h2>取回课表内容</h2>
             <p id='school-url'>{school?.login?.loginUrl || '等待学校信息'}</p>
             <div className='button-row import-control-actions'>
               <button className='button-secondary' id='copy-collector-button' type='button' disabled={!school} onClick={() => void handleCopyCollectorScript()}>
-                复制采集脚本
+                复制取数指令
               </button>
             </div>
             <div className={`form-status import-status${isStatusError ? ' error' : ''}`} id='import-status'>
               {statusMessage}
             </div>
             <label className='form-field import-manual-field'>
-              <span>手动粘贴课表 HTML</span>
+              <span>直接粘贴课表内容</span>
               <textarea
                 className='form-input'
                 id='manual-html'
-                placeholder='如果已经拿到学校课表 HTML，可以直接粘贴到这里后再开始解析。'
+                placeholder='如果已经从学校页面复制到课表内容，粘贴到这里再开始整理。'
                 value={manualHtml}
                 onChange={(event) => setManualHtml(event.target.value)}
               ></textarea>
@@ -387,14 +387,14 @@ function CourseImportPage() {
             <section className='surface-card import-result-card' id='import-result-panel'>
               <div className='result-head'>
                 <div>
-                  <p className='eyebrow'>Result</p>
+                  <p className='eyebrow'>整理结果</p>
                   <h2 className='result-title'>解析结果</h2>
                 </div>
                 <button className='button-secondary' id='result-close' type='button' onClick={() => setIsResultVisible(false)}>
                   收起
                 </button>
               </div>
-              <textarea className='result-console' id='course-result' spellCheck={false} placeholder='解析后的课程 JSON 会显示在这里' value={resultJson} readOnly></textarea>
+              <textarea className='result-console' id='course-result' spellCheck={false} placeholder='整理好的课程会显示在这里，可以复制带走' value={resultJson} readOnly></textarea>
             </section>
           ) : null}
         </section>
