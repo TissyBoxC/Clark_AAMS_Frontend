@@ -214,7 +214,11 @@ function UserQuestionsPage() {
                 <p><strong>解析：</strong>{result.analysis}</p>
               ) : null}
               {typeof result.answer !== 'string' && typeof result.analysis !== 'string' ? (
-                <pre className='question-raw'>{JSON.stringify(result, null, 2)}</pre>
+                // 拿不到规范字段时，绝不把原始数据糊到界面上。
+                // 用户看到花括号只会更困惑，说清楚情况就够了。
+                <p className='schedule-muted'>
+                  这次没能给出可读的解析结果，可以换一张更清晰的题目截图再试一次。
+                </p>
               ) : null}
             </div>
           </section>

@@ -7,6 +7,8 @@ import UserWorkspaceShell from '../../components/UserWorkspaceShell';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
 import { copyText } from '../../utils/clipboard';
+import { normalizeCourse } from '../../types/schedule-types.ts';
+import type { ICourseType } from '../../types/schedule-types.ts';
 import { userMessageFor } from '../../constants/error-codes';
 
 function UserRecognitionPage() {
@@ -19,7 +21,8 @@ function UserRecognitionPage() {
   const [toolHint, setToolHint] = useState<string>('识别完成后，这里会显示取件码和识别出的课程。');
   const [pickupCode, setPickupCode] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
-  const [courseJson, setCourseJson] = useState<string>('');
+  /** 识别出的课程，转成可读列表展示；完整数据只用于复制。 */
+  const [courses, setCourses] = useState<ICourseType[]>([]);
   const [isRecognizing, setIsRecognizing] = useState<boolean>(false);
   const [isPickupModalOpen, setIsPickupModalOpen] = useState<boolean>(false);
   const [pickupModalCode, setPickupModalCode] = useState<string>('');
@@ -92,7 +95,9 @@ function UserRecognitionPage() {
 
       setToolState('识别完成。', result.pickupCode, '已生成取件码，后续可凭此再次回查结果。');
       setProgress(100);
-      setCourseJson(JSON.stringify(result.courses, null, 2));
+      setCourses((result.courses || []).map((item, index) =>
+        normalizeCourse(item as unknown as Record<string, unknown>, index + 1),
+      ));
       setPickupModalCode(result.pickupCode);
       setPickupModalStatus('');
       setPickupModalStatusVariant('');
@@ -108,7 +113,7 @@ function UserRecognitionPage() {
         '识别服务暂时没有响应，请稍后再用清晰的课表截图重试。',
       );
       setProgress(0);
-      setCourseJson('');
+      setCourses([]);
     } finally {
       progressTimerRef.current = null;
       setIsRecognizing(false);
@@ -259,14 +264,23 @@ function UserRecognitionPage() {
                   {progress}%
                 </progress>
 
-                <textarea
-                  className='result-console'
-                  id='course-json'
-                  spellCheck={false}
-                  placeholder='识别结果会显示在这里。'
-                  value={courseJson}
-                  readOnly
-                ></textarea>
+                {courses.length > 0 ? (
+                  <ul className='pickup-course-list' id='recognition-course-list'>
+                    {courses.map((course) => (
+                      <li key={course.id}>
+                        <strong>{course.name}</strong>
+                        <span>
+                          周{course.dayOfWeek === 0 ? '日' : ['一', '二', '三', '四', '五', '六'][course.dayOfWeek - 1]}
+                          {' · '}
+                          第 {course.startLesson}-{course.endLesson} 节
+                          {course.location ? ` · ${course.location}` : ''}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className='schedule-muted'>识别出的课程会显示在这里。</p>
+                )}
 
                 <div className='form-status'>
                   建议同时保留原始截图和取件码，方便识别失败时重试，或之后通过回查工具重新取回结果。

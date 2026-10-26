@@ -4048,6 +4048,36 @@ body.dashboard-page::after {
   font-size: 0.82rem;
 }
 
+/* 取回结果：课程清单，替代原来的原始数据文本框 */
+.pickup-course-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pickup-course-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  align-items: baseline;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+}
+
+.pickup-course-list strong {
+  color: var(--text);
+  font-size: 0.96rem;
+}
+
+.pickup-course-list span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
 /* 常用入口：两列列表而非三列卡片墙——四项并列时，列表更好扫读 */
 .quick-action-grid {
   display: grid;
@@ -4325,18 +4355,6 @@ body.dashboard-page::after {
 
 .question-result p {
   margin: 0;
-}
-
-.question-raw {
-  margin: 0;
-  padding: 14px;
-  border-radius: 10px;
-  background: rgba(100, 116, 139, 0.08);
-  font-size: 0.8rem;
-  line-height: 1.5;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
 }
 
 .button-row {

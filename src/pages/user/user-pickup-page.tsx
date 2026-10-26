@@ -7,6 +7,8 @@ import UserWorkspaceShell from '../../components/UserWorkspaceShell';
 import { usePageMeta } from '../../hooks/usePageMeta';
 import { useRequiredVerifiedUser } from '../../hooks/useRequiredVerifiedUser';
 import { copyText } from '../../utils/clipboard';
+import { normalizeCourse } from '../../types/schedule-types.ts';
+import type { ICourseType } from '../../types/schedule-types.ts';
 import { userMessageFor } from '../../constants/error-codes';
 
 function UserPickupPage() {
@@ -17,13 +19,15 @@ function UserPickupPage() {
   const [pickupCode, setPickupCode] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
   const [courseJson, setCourseJson] = useState<string>('');
+  /** 取回后转成可读的课程列表；原始数据只留给「复制课表」用。 */
+  const [courses, setCourses] = useState<ICourseType[]>([]);
   const [copyStatus, setCopyStatus] = useState<string>('');
   const [copyStatusVariant, setCopyStatusVariant] = useState<'success' | 'error' | ''>('');
   const [isLookingUp, setIsLookingUp] = useState<boolean>(false);
 
   usePageMeta('取件码回查', '通过 8 位取件码取回保存在珂拉课程表里的课表。');
 
-  const currentUserLabel = user.username || `用户 ${user.id}`;
+  const currentUserLabel = user.username || '同学';
 
   function setToolState(message: string, code: string, hint: string): void {
     setToolStatus(message);
@@ -58,6 +62,10 @@ function UserPickupPage() {
       setToolState('回查完成。', normalizedCode, '取件码记录已成功返回。');
       setProgress(100);
       setCourseJson(JSON.stringify(result, null, 2));
+      const list = Array.isArray(result)
+        ? result.map((item, index) => normalizeCourse(item as Record<string, unknown>, index + 1))
+        : [];
+      setCourses(list);
     } catch (error) {
       setToolState(
         userMessageFor(error),
@@ -66,6 +74,7 @@ function UserPickupPage() {
       );
       setProgress(0);
       setCourseJson('');
+      setCourses([]);
     } finally {
       setIsLookingUp(false);
     }
@@ -189,14 +198,27 @@ function UserPickupPage() {
                   {progress}%
                 </progress>
 
-                <textarea
-                  className='result-console'
-                  id='course-json'
-                  spellCheck={false}
-                  placeholder='回查结果会显示在这里。'
-                  value={courseJson}
-                  readOnly
-                ></textarea>
+                {/* 显示看得懂的课程清单；原始数据只用于「复制课表」，
+                    不直接摊在界面上——花括号对用户没有任何意义。 */}
+                {courses.length > 0 ? (
+                  <ul className='pickup-course-list' id='pickup-course-list'>
+                    {courses.map((course) => (
+                      <li key={course.id}>
+                        <strong>{course.name}</strong>
+                        <span>
+                          周{course.dayOfWeek === 0 ? '日' : ['一', '二', '三', '四', '五', '六'][course.dayOfWeek - 1]}
+                          {' · '}
+                          第 {course.startLesson}-{course.endLesson} 节
+                          {course.location ? ` · ${course.location}` : ''}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className='schedule-muted' id='pickup-empty'>
+                    {courseJson ? '取回的记录里没有课程。' : '取回结果会显示在这里。'}
+                  </p>
+                )}
 
                 <div className='button-row'>
                   <button className='button-secondary' type='button' onClick={() => void handleCopyResult()}>
