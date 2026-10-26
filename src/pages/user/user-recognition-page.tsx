@@ -16,7 +16,7 @@ function UserRecognitionPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [toolStatus, setToolStatus] = useState<string>('等待上传截图。');
-  const [toolHint, setToolHint] = useState<string>('识别完成后，会在这里显示取件码和课程 JSON。');
+  const [toolHint, setToolHint] = useState<string>('识别完成后，这里会显示取件码和识别出的课程。');
   const [pickupCode, setPickupCode] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
   const [courseJson, setCourseJson] = useState<string>('');
@@ -26,7 +26,7 @@ function UserRecognitionPage() {
   const [pickupModalStatus, setPickupModalStatus] = useState<string>('');
   const [pickupModalStatusVariant, setPickupModalStatusVariant] = useState<'success' | 'error' | ''>('');
 
-  usePageMeta('课表识别', '上传课表截图进行 OCR 识别，并生成取件码。');
+  usePageMeta('课表识别', '上传课表截图，识别成课程并生成取件码。');
 
   const currentUserLabel = user.username || `用户 ${user.id}`;
 
@@ -54,7 +54,7 @@ function UserRecognitionPage() {
     }
 
     setSelectedFiles(imageFiles);
-    setToolState(`已选择 ${imageFiles.length} 张截图。`, '', '确认后提交即可开始 OCR 识别。');
+    setToolState(`已选择 ${imageFiles.length} 张截图。`, '', '确认无误后点一下，就开始识别。');
   }
 
   async function handleUpload(event: FormEvent<HTMLFormElement>): Promise<void> {
@@ -69,7 +69,7 @@ function UserRecognitionPage() {
       return;
     }
 
-    setToolState('正在上传截图...', '', '图片会发送到后端 OCR 服务进行识别。');
+    setToolState('正在上传截图...', '', '图片会送到识别服务处理，只用于这次识别。');
     setIsRecognizing(true);
     setProgress(12);
 
@@ -79,7 +79,7 @@ function UserRecognitionPage() {
 
     // 延迟切换到第二阶段状态，避免极快请求导致状态闪烁。
     progressTimerRef.current = window.setTimeout(() => {
-      setToolState('AI 正在识别...', '', '多张截图时，OCR 合并结果会稍微更久一些。');
+      setToolState('AI 正在识别...', '', '一次传多张图，需要的时间会久一些。');
       setProgress(68);
     }, 900);
 
@@ -135,7 +135,7 @@ function UserRecognitionPage() {
       <UserWorkspaceShell
         user={user}
         title='课表识别'
-        description='上传课表截图进行 OCR 识别，并生成可回查的取件码。'
+        description='上传课表截图，识别成课程并生成可回查的取件码。'
         contentClassName='dashboard-content-wide'
       >
         <div className='workspace-layout workspace-layout-wide'>
@@ -143,13 +143,13 @@ function UserRecognitionPage() {
             <div className='workspace-card__header'>
               <p className='eyebrow'>课表识别</p>
               <h2>上传截图，识别课表</h2>
-              <p>这里专注处理课表截图识别、取件码生成和 JSON 结果展示；取件码回查单独保留，方便之后再次找回结果。</p>
+              <p>这一页负责把课表截图变成课程，并生成取件码；之后想再次取回结果，去「取件码回查」。</p>
             </div>
 
             <div className='workspace-points'>
               <div className='workspace-point'>
                 <strong>支持多图识别</strong>
-                <span>可一次上传多张课表截图，识别完成后会返回课程 JSON 与 8 位取件码。</span>
+                <span>可以一次上传多张课表截图，识别完成后会给出课程和 8 位取件码。</span>
               </div>
               <div className='workspace-point'>
                 <strong>结果便于回查</strong>
@@ -225,7 +225,7 @@ function UserRecognitionPage() {
                     />
                     <span className='drop-mark'>+</span>
                     <strong>拖入课表截图，或点击选择图片文件。</strong>
-                    <span>支持多张截图上传，识别完成后会返回课程 JSON 与可复用的取件码。</span>
+                    <span>支持多张截图，识别完成后会给出课程和可以反复使用的取件码。</span>
                   </div>
 
                   <div className='file-pills' id='file-list'>
@@ -299,7 +299,7 @@ function UserRecognitionPage() {
           </button>
           <p className='eyebrow'>取件码</p>
           <h2 id='pickup-modal-title'>识别完成</h2>
-          <p>请保存下面的取件码。之后你可以在取件码回查页面重新输入它，取回本次识别生成的课程 JSON。</p>
+          <p>请记下这个取件码。之后在「取件码回查」里输入它，就能取回这次识别出的课表。</p>
           <div className='code-chip pickup-modal-code' id='pickup-modal-code'>
             {pickupModalCode}
           </div>

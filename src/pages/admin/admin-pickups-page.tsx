@@ -95,7 +95,7 @@ function AdminPickupsPage() {
       JSON.parse(normalizedJsonText);
       await updateAdminCoursePickup(selectedRecord.code, normalizedJsonText);
       setDetailJsonText(normalizedJsonText);
-      setDetailStatus('JSON 保存成功');
+      setDetailStatus('保存成功');
       await loadDetail(selectedRecord.code);
     } catch (error) {
       setDetailStatus(userMessageFor(error));
@@ -135,7 +135,7 @@ function AdminPickupsPage() {
   return (
     <AdminLayout
       title='取件码管理'
-      description='管理网页识别生成的课程 JSON 记录与原始图片。'
+      description='管理网页识别生成的课程记录与原始图片。'
       activeKey='pickups'
       badgeText={`${records.length} 条`}
     >

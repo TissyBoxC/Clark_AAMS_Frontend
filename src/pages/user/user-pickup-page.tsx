@@ -13,7 +13,7 @@ function UserPickupPage() {
   const { user, isReady } = useRequiredVerifiedUser();
   const [pickupLookupCode, setPickupLookupCode] = useState<string>('');
   const [toolStatus, setToolStatus] = useState<string>('等待输入取件码。');
-  const [toolHint, setToolHint] = useState<string>('输入 8 位取件码后，可回查之前保存的课程 JSON。');
+  const [toolHint, setToolHint] = useState<string>('输入 8 位取件码，就能取回之前保存的课表。');
   const [pickupCode, setPickupCode] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
   const [courseJson, setCourseJson] = useState<string>('');
@@ -21,7 +21,7 @@ function UserPickupPage() {
   const [copyStatusVariant, setCopyStatusVariant] = useState<'success' | 'error' | ''>('');
   const [isLookingUp, setIsLookingUp] = useState<boolean>(false);
 
-  usePageMeta('取件码回查', '通过 8 位取件码回查 珂拉课程表 已保存的课程 JSON。');
+  usePageMeta('取件码回查', '通过 8 位取件码取回保存在珂拉课程表里的课表。');
 
   const currentUserLabel = user.username || `用户 ${user.id}`;
 
@@ -39,7 +39,7 @@ function UserPickupPage() {
     const normalizedCode = pickupLookupCode.trim().toUpperCase();
 
     if (!normalizedCode) {
-      setToolState('请输入取件码。', '', '输入保存过的 8 位取件码后，系统会读取已保存的课程 JSON。');
+      setToolState('请输入取件码。', '', '输入之前保存的 8 位取件码，就能取回那份课表。');
       return;
     }
 
@@ -52,7 +52,7 @@ function UserPickupPage() {
     setIsLookingUp(true);
 
     try {
-      setToolState('正在回查取件码...', normalizedCode, '正在从服务器读取已保存的课程 JSON。');
+      setToolState('正在回查取件码...', normalizedCode, '正在取回课表...');
       setProgress(36);
       const result = await fetchCoursePickupJson(normalizedCode);
       setToolState('回查完成。', normalizedCode, '取件码记录已成功返回。');
@@ -80,7 +80,7 @@ function UserPickupPage() {
 
     try {
       await copyText(courseJson);
-      setCopyStatus('课程 JSON 已复制。');
+      setCopyStatus('课表已复制。');
       setCopyStatusVariant('success');
     } catch {
       setCopyStatus('复制失败，请手动选择结果内容后复制。');
@@ -97,7 +97,7 @@ function UserPickupPage() {
       <UserWorkspaceShell
         user={user}
         title='取件码回查'
-        description='通过 8 位取件码回查之前保存的课程 JSON 结果。'
+        description='通过 8 位取件码取回之前保存的课表。'
         contentClassName='dashboard-content-wide'
       >
         <div className='workspace-layout workspace-layout-wide'>
@@ -105,7 +105,7 @@ function UserPickupPage() {
             <div className='workspace-card__header'>
               <p className='eyebrow'>取件码回查</p>
               <h2>输入取件码，找回结果</h2>
-              <p>这个工具从识别流程中独立出来，方便你在不重新上传课表截图的情况下，找回之前保存过的课程 JSON。</p>
+              <p>不用重新上传课表截图，凭取件码就能找回之前保存过的那份课表。</p>
             </div>
 
             <div className='workspace-points'>
@@ -115,7 +115,7 @@ function UserPickupPage() {
               </div>
               <div className='workspace-point'>
                 <strong>结果可以继续复用</strong>
-                <span>回查成功后可直接复制 JSON，用于调试、导入或本地备份。</span>
+                <span>取回后可以直接复制，用于导入别的设备或自己留个备份。</span>
               </div>
             </div>
 
@@ -166,7 +166,7 @@ function UserPickupPage() {
 
                   <div className='button-row'>
                     <button className='button-primary' type='submit' disabled={isLookingUp}>
-                      {isLookingUp ? '正在回查...' : '查询 JSON'}
+                      {isLookingUp ? '正在取回...' : '取回课表'}
                     </button>
                   </div>
                 </form>
@@ -200,7 +200,7 @@ function UserPickupPage() {
 
                 <div className='button-row'>
                   <button className='button-secondary' type='button' onClick={() => void handleCopyResult()}>
-                    复制结果 JSON
+                    复制课表
                   </button>
                 </div>
 
