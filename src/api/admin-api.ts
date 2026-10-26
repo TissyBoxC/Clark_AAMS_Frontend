@@ -13,7 +13,7 @@ import type {
   IAdminSetupStatusType,
   IAppVersionCheckRequestType,
   IAppVersionCheckResultType,
-  ICourseType,
+  ICourseRawType,
   ICoursePickupCreateResultType,
   ICoursePickupRecordType,
   IHealthStatusType,
@@ -171,14 +171,14 @@ export async function updateAdminAiConfig(
   });
 }
 
-export async function recognizeCourses(files: File[]): Promise<ICourseType[]> {
+export async function recognizeCourses(files: File[]): Promise<ICourseRawType[]> {
   const formData = new FormData();
   files.forEach((file) => {
     formData.append('images', file);
   });
 
   // P2-2：后端已统一为 {code,message,data} 信封，data 为课程数组。
-  return requestEnvelope<ICourseType[]>('/api/v1/courses/recognize', {
+  return requestEnvelope<ICourseRawType[]>('/api/v1/courses/recognize', {
     method: 'POST',
     includeAuth: false,
     body: formData,

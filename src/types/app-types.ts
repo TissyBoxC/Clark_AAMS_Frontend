@@ -79,7 +79,18 @@ export interface ILessonTimeProfileType {
   lessons: ILessonTimeType[];
 }
 
-export interface ICourseType {
+/**
+ * 服务端返回的**原始**课程数据（导入 / 识别接口）。
+ *
+ * 字段全可选：这是外部输入，历史版本里 `position`、`day`、`startSection`
+ * 等别名都可能出现，也可能缺失。**不要直接拿来渲染**——
+ * 先经 `normalizeCourse` 转成 `schedule-types` 里的 `ICourseType`。
+ *
+ * 曾经这个类型也叫 `ICourseType`，与前端规范模型同名。
+ * 因为「字段全可选」的版本对必填版本是兼容的，拿错了 TS 也不会报错，
+ * 要到运行时才发现 `weekPattern` 是 undefined。故改名区分。
+ */
+export interface ICourseRawType {
   name: string;
   teacher?: string;
   location?: string;
@@ -121,7 +132,7 @@ export interface ICoursePickupCreateResultType {
 
 export interface ICourseRecognitionResultType {
   pickupCode: string;
-  courses: ICourseType[];
+  courses: ICourseRawType[];
 }
 
 export interface ICourseImportSessionType {
@@ -139,7 +150,7 @@ export interface ICourseImportResultType {
   schoolName?: string | null;
   importerVersion?: number | null;
   pickupCode?: string;
-  courses?: ICourseType[];
+  courses?: ICourseRawType[];
   warnings?: string[];
   savedFileName?: string | null;
 }
