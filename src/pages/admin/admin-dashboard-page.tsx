@@ -104,7 +104,7 @@ function AdminDashboardPage() {
   return (
     <AdminLayout
       title='珂拉课程表 管理台'
-      description='学校适配器、客户端版本、AI 识别和取件码的统一后台入口。'
+      description='学校、版本、识别和取件码的统一入口。'
       activeKey='dashboard'
       badgeText={badgeText}
     >
@@ -142,7 +142,7 @@ function AdminDashboardPage() {
           <article>
             <span>03</span>
             <strong>最后观察 AI 与取件码</strong>
-            <p>识别配置和取件码记录用于判断 OCR 工作流是否稳定。</p>
+            <p>识别设置和取件码记录能看出识别是否稳定。</p>
           </article>
         </section>
 
@@ -158,7 +158,7 @@ function AdminDashboardPage() {
               <article className={styles.statusItem}>
                 <span>学校管理</span>
                 <strong>{schoolsState}</strong>
-                <p>学校适配器与导入能力配置。</p>
+                <p>学校列表与导入能力。</p>
               </article>
               <article className={styles.statusItem}>
                 <span>版本管理</span>

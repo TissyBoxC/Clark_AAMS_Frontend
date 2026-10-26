@@ -125,7 +125,7 @@ function AdminLoginPage() {
           <div>
             <p className={styles.eyebrow}>后台入口</p>
             <h2>珂拉课程表 后台登录</h2>
-            <p>登录后进入学校适配器、版本管理、AI 配置和取件码后台。</p>
+            <p>登录后可以管理学校、版本、识别设置和取件码。</p>
           </div>
         </div>
         <div className={styles.panelBody}>

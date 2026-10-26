@@ -154,7 +154,7 @@ function AdminEmailPage() {
                 清空已保存的密钥或 SMTP 授权码
               </label>
               <label className={styles.field}>
-                <span>HTML 模板</span>
+                <span>邮件内容模板</span>
                 <textarea className={styles.textarea} spellCheck={false} placeholder='可使用 {{code}} {{email}} {{subject}} {{senderName}} 占位符' value={config.htmlTemplate} onChange={(event) => setConfig((previous) => ({ ...previous, htmlTemplate: event.target.value }))}></textarea>
               </label>
               <div className={styles.actions}>

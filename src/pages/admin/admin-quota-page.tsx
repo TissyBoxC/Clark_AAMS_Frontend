@@ -122,7 +122,7 @@ function AdminQuotaPage() {
             <div className={styles.statusItem}>
               <span>单人最高</span>
               <strong>{summary.peakUserCalls}</strong>
-              <small>用来识别是否有人脚本刷</small>
+              <small>看有没有人在用程序重复刷</small>
             </div>
             <div className={styles.statusItem}>
               <span>已达上限</span>

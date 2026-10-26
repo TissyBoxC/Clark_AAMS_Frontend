@@ -78,7 +78,7 @@ function HomePage() {
             <article className='surface-card feature-card'>
               <div className='feature-icon'>02</div>
               <h3>截图识别</h3>
-              <p>上传课表截图，识别后生成课程 JSON。</p>
+              <p>上传课表截图，识别后得到课程列表。</p>
             </article>
             <article className='surface-card feature-card'>
               <div className='feature-icon'>03</div>
@@ -107,7 +107,7 @@ function HomePage() {
             <article className='surface-card home-process-step'>
               <span>03</span>
               <h3>拿到结果</h3>
-              <p>复制 JSON，或保存取件码备用。</p>
+              <p>复制课程内容，或保存取件码备用。</p>
             </article>
           </div>
         </section>

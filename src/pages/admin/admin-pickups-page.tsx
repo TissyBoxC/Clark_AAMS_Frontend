@@ -144,7 +144,7 @@ function AdminPickupsPage() {
           <div className={styles.panelHead}>
             <div>
               <h2>记录</h2>
-              <p>手动新增课程 JSON 或选择现有取件码。</p>
+              <p>可以手动录入课程，或直接选一条已有的取件码。</p>
             </div>
             <div className={styles.actions}>
               <button className={styles.buttonSecondary} type='button' onClick={() => void loadRecords()}>
@@ -155,7 +155,7 @@ function AdminPickupsPage() {
           <div className={styles.panelBody}>
             <form className={styles.form} onSubmit={handleManualCreate}>
               <label className={styles.field}>
-                <span>手动添加课程 JSON</span>
+                <span>手动录入课程</span>
                 <textarea className={styles.textarea} spellCheck={false} value={manualJsonText} onChange={(event) => setManualJsonText(event.target.value)}></textarea>
               </label>
               <div className={styles.actions}>
@@ -183,7 +183,7 @@ function AdminPickupsPage() {
           <div className={styles.panelHead}>
             <div>
               <h2>详情</h2>
-              <p>编辑课程 JSON、复制取件码或删除记录。</p>
+              <p>可以查看课程内容、复制取件码或删除这条记录。</p>
             </div>
             <span className={styles.statusText}>{detailStatus}</span>
           </div>
@@ -193,7 +193,7 @@ function AdminPickupsPage() {
               <>
                 <div className={styles.actions}>
                   <button className={styles.button} type='button' onClick={() => void handleSaveJson()}>
-                    保存 JSON
+                    保存课程
                   </button>
                   <button className={styles.buttonSecondary} type='button' onClick={() => void copyText(selectedRecord.code)}>
                     复制取件码
@@ -203,7 +203,7 @@ function AdminPickupsPage() {
                   </button>
                 </div>
                 <label className={styles.field}>
-                  <span>课程 JSON</span>
+                  <span>课程内容</span>
                   <textarea className={`${styles.textarea} ${styles.resultConsole}`} spellCheck={false} value={detailJsonText} onChange={(event) => setDetailJsonText(event.target.value)}></textarea>
                 </label>
                 <section className={styles.stack}>

@@ -65,7 +65,7 @@ function AdminLayout({
         <div className={styles.profileCard}>
           <span className={styles.profileMeta}>当前区域</span>
           <strong>后台管理</strong>
-          <span className={styles.profileMeta}>学校适配器、版本、AI 与邮件服务</span>
+          <span className={styles.profileMeta}>学校、版本、识别与邮件</span>
           <span className={styles.profileSignal}>线上环境</span>
         </div>
 

@@ -110,7 +110,7 @@ function AdminAiPage() {
           <div className={styles.panelHead}>
             <div>
               <h2>识别模型</h2>
-              <p>服务地址填到 /v1 就够了，具体的调用路径会自动补上。</p>
+              <p>服务地址填到 /v1 就够了，后面的部分会自动补上。</p>
             </div>
             <span className={styles.statusText}>{saveStatus}</span>
           </div>
@@ -174,7 +174,7 @@ function AdminAiPage() {
               </div>
             </form>
             <label className={styles.field}>
-              <span>纯 JSON 返回</span>
+              <span>要求返回纯数据</span>
               <textarea className={`${styles.textarea} ${styles.resultConsole}`} spellCheck={false} placeholder='识别结果会显示在这里' value={resultText} readOnly></textarea>
             </label>
           </div>

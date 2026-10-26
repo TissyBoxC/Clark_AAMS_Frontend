@@ -152,7 +152,7 @@ function CourseImportPage() {
   const [statusMessage, setStatusMessage] = useState<string>(() => (
     isMissingSchoolId
       ? '缺少 schoolId，请从首页或用户中心重新进入。'
-      : '打开学校原站窗口并进入课表页后，再运行采集脚本或直接粘贴课表 HTML。'
+      : '打开学校原站窗口并进入课表页后，再执行取数指令或直接粘贴课表内容。'
   ));
   const [isStatusError, setIsStatusError] = useState<boolean>(() => isMissingSchoolId);
   const [resultJson, setResultJson] = useState<string>('');
@@ -191,7 +191,7 @@ function CourseImportPage() {
       }
 
       if (!loginSession.extra.html && !loginSession.cookie) {
-        setStatus('请先运行采集脚本，或直接粘贴课表 HTML 后再解析。', true);
+        setStatus('请先执行取数指令，或直接粘贴课表内容后再整理。', true);
         return;
       }
 
@@ -312,7 +312,7 @@ function CourseImportPage() {
     }
 
     popup.focus();
-    setStatus('学校原站窗口已打开。进入课表页后运行采集脚本，或把课表 HTML 粘贴到右侧文本框中。');
+    setStatus('学校原站窗口已打开。进入课表页后执行取数指令，或把课表内容粘贴到右侧文本框中。');
   }
 
   if (!isReady) {
@@ -345,7 +345,7 @@ function CourseImportPage() {
             </div>
             <div className='workspace-directory-meta__item'>
               <span>数据来源</span>
-              <strong>{collectedSession ? '已采集' : manualHtml ? '手动 HTML' : '等待中'}</strong>
+              <strong>{collectedSession ? '已采集' : manualHtml ? '直接粘贴' : '等待中'}</strong>
             </div>
           </div>
           <div className='button-row'>

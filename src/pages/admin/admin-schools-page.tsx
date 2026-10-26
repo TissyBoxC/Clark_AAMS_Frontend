@@ -6,7 +6,6 @@ import type { ISchoolScaffoldPayloadType, ISchoolType } from '../../types/app-ty
 import AdminLayout from '../../layouts/AdminLayout';
 import { useBodyClass } from '../../hooks/useBodyClass';
 import { usePageMeta } from '../../hooks/usePageMeta';
-import { formatJson } from '../../utils/json';
 
 import styles from './admin-pages.module.css';
 import { userMessageFor } from '../../constants/error-codes';
@@ -33,7 +32,7 @@ function AdminSchoolsPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useBodyClass('admin-route');
-  usePageMeta('学校适配器管理', '查看现有学校配置，并生成新的学校适配器脚手架。');
+  usePageMeta('学校管理', '查看已接入的学校，也可以新增一所。');
 
   async function loadSchools(): Promise<void> {
     setTableStatus('加载中');
@@ -61,11 +60,17 @@ function AdminSchoolsPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setIsSubmitting(true);
-    setStatusMessage('正在生成脚手架...');
+    setStatusMessage('正在创建学校入口...');
 
     try {
       const result = await createSchoolScaffold(scaffoldForm);
-      setStatusMessage(`脚手架生成成功：${formatJson(result)}`);
+      // 不要把返回值整个打印出来：管理员要的是「做成了没有」，不是一份数据。
+      // 返回值是 JSON 联合类型，取名字前要先确认它确实是对象。
+      const createdName =
+        result && typeof result === 'object' && !Array.isArray(result) && typeof result.name === 'string'
+          ? result.name
+          : '';
+      setStatusMessage(createdName ? `${createdName} 的导入入口已建好。` : '学校导入入口已建好。');
       void loadSchools();
     } catch (error) {
       setStatusMessage(userMessageFor(error));
@@ -76,8 +81,8 @@ function AdminSchoolsPage() {
 
   return (
     <AdminLayout
-      title='学校适配器管理'
-      description='查看当前学校列表，并生成新的学校适配器脚手架。'
+      title='学校管理'
+      description='这里列出已经接入的学校。'
       activeKey='schools'
       badgeText={`${schools.length} 所学校`}
     >
@@ -200,7 +205,7 @@ function AdminSchoolsPage() {
               </div>
               <div className={styles.actions}>
                 <button className={styles.button} type='submit' disabled={isSubmitting}>
-                  {isSubmitting ? '生成中...' : '生成脚手架'}
+                  {isSubmitting ? '生成中...' : '新增学校'}
                 </button>
               </div>
               <div className={`${styles.statusText} ${statusMessage.includes('失败') ? styles.statusError : ''}`}>{statusMessage}</div>

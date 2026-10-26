@@ -22,27 +22,7 @@ import sys
 
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-def _find_repo_root() -> str:
-    """定位同时包含 Clark_AAMS_Frontend 与 Clark_AAMS 的目录。
-
-    脚本既可能放在工作区根的 tools/ 下（上一级就是它），
-    也可能被复制进 Clark_AAMS_Frontend/tools/ 随仓库分发（那样要再上两级）。
-    硬编码上一级会在第二种位置下找不到 App 目录，所以这里往上找。
-    """
-    here = os.path.dirname(os.path.abspath(__file__))
-    for _ in range(4):
-        if os.path.isdir(os.path.join(here, 'Clark_AAMS_Frontend')) and \
-           os.path.isdir(os.path.join(here, 'Clark_AAMS')):
-            return here
-        parent = os.path.dirname(here)
-        if parent == here:
-            break
-        here = parent
-    # 找不到就退回旧行为，至少不会崩
-    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
-ROOT = _find_repo_root()
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 技术术语：用户不该看到实现细节
 TECHNICAL = [
@@ -53,6 +33,11 @@ TECHNICAL = [
     r'\bNaN\b', r'\[object Object\]', r'localhost', r'127\.0\.0\.1', r'\bport\b',
     r'环境变量', r'\bmock\b', r'Swagger', r'console\b', r'\blog\b', r'stack trace',
     r'接口', r'会话', r'堆栈', r'后端', r'前端', r'数据库', r'配置项', r'API ?Key',
+    # 文件格式与缩写：App 里曾写着「使用OCR导入」「粘贴课程 JSON 数组」，
+    # 管理端写着「保存 JSON」，用户都看不懂。
+    r'\bOCR\b', r'\bJSON\b', r'\bHTML\b', r'\bXML\b', r'\bSDK\b', r'\bBuild\b',
+    r'适配器', r'脚手架', r'代码骨架', r'/api/', r'/chat/',
+    # 别把 /v1 单独列成违规：管理员填服务地址时它必须出现，那是正当内容。
 ]
 
 # 开发提示：写给开发者看的话
