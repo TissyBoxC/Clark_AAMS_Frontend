@@ -270,7 +270,8 @@ function ScheduleBoard({ user }: { user: IUserType }) {
 
   /** 清空课表。 */
   async function handleClearAll(): Promise<void> {
-    if (!window.confirm('确定清空全部课程？此操作不可撤销。')) {
+    const total = courses.length;
+    if (!window.confirm(`删除后无法恢复。确定清空全部 ${total} 门课程吗？`)) {
       return;
     }
 
@@ -305,50 +306,53 @@ function ScheduleBoard({ user }: { user: IUserType }) {
     >
       <div className='schedule-page'>
       <section className='surface-card schedule-panel'>
-        <div className='schedule-panel-head'>
-          <h2>周视图</h2>
-          <div className='button-row'>
+        {/* 周切换是浏览动作，和「新增/清空」不是同一类事。
+            原先五颗按钮挤在一行，主次不分；现在分开。 */}
+        <div className='schedule-weekbar'>
+          <div className='schedule-weeknav'>
             <button
               type='button'
               className='button-ghost'
               onClick={() => setViewWeek((week) => Math.max(1, week - 1))}
               disabled={viewWeek <= 1}
+              aria-label='看上一周'
             >
               上一周
             </button>
-            <button
-              type='button'
-              className='button-ghost'
-              onClick={() => setViewWeek(currentWeek)}
-            >
-              回到本周
-            </button>
+            <div className='schedule-weeknav-label'>
+              <strong>第 {viewWeek} 周</strong>
+              <span>
+                {monday ? `${formatDate(monday)} 起` : '还没设置学期开始日期'}
+                {viewWeek === currentWeek ? ' · 本周' : ''}
+              </span>
+            </div>
             <button
               type='button'
               className='button-ghost'
               onClick={() => setViewWeek((week) => Math.min(settings.maxWeeks, week + 1))}
               disabled={viewWeek >= settings.maxWeeks}
+              aria-label='看下一周'
             >
               下一周
             </button>
+          </div>
+          <div className='button-row'>
+            {viewWeek !== currentWeek ? (
+              <button
+                type='button'
+                className='button-secondary'
+                onClick={() => setViewWeek(currentWeek)}
+              >
+                回到本周
+              </button>
+            ) : null}
             <button type='button' className='button-primary' onClick={() => setEditing('new')}>
               新增课程
             </button>
-            {courses.length > 0 ? (
-              <button type='button' className='button-ghost' onClick={() => void handleClearAll()}>
-                清空课表
-              </button>
-            ) : null}
           </div>
         </div>
 
-        <p className='schedule-muted'>
-          第 {viewWeek} 周 / 共 {settings.maxWeeks} 周
-          {monday ? `，本周从 ${formatDate(monday)} 开始` : '，尚未设置学期起始日期'}
-          {viewWeek === currentWeek ? '（当前周）' : ''}
-        </p>
-
-        {isLoading ? <p className='schedule-muted'>正在从服务器同步课表…</p> : null}
+        {isLoading ? <p className='schedule-muted'>正在读取课表...</p> : null}
 
         {loadError ? <p className='schedule-badge schedule-badge-warn'>{loadError}</p> : null}
 
@@ -363,10 +367,21 @@ function ScheduleBoard({ user }: { user: IUserType }) {
         ) : null}
 
         {courses.length === 0 && !isLoading ? (
-          <p className='schedule-empty'>
-            还没有课表数据。请先通过「教务导入」或「取件码回查」获取课程；
-            登录状态下的导入结果会保存到账号，换设备也能看到。
-          </p>
+          <div className='schedule-empty-block'>
+            <p className='schedule-empty-title'>还没有课程</p>
+            <p className='schedule-empty-copy'>
+              课表可以是空的，先从下面任意一种方式把课放进来。
+              导入后的课会存到账号里，换设备登录也能看到。
+            </p>
+            <div className='button-row'>
+              <a className='button-primary' href='/user/import'>
+                从教务系统导入
+              </a>
+              <a className='button-secondary' href='/user/recognition'>
+                用截图识别课表
+              </a>
+            </div>
+          </div>
         ) : (
           <div className='schedule-grid-wrap'>
             <table className='schedule-grid'>
@@ -436,9 +451,9 @@ function ScheduleBoard({ user }: { user: IUserType }) {
           <h2>今日课程</h2>
         </div>
         {viewWeek !== currentWeek ? (
-          <p className='schedule-muted'>当前查看的是第 {viewWeek} 周，切回本周可查看今日课程。</p>
+          <p className='schedule-muted'>正在看第 {viewWeek} 周。切回本周就能看到今天的课。</p>
         ) : todayCourses.length === 0 ? (
-          <p className='schedule-empty'>今天没有课。</p>
+          <p className='schedule-empty'>今天没有排课，可以休息一下。</p>
         ) : (
           <ul className='today-list'>
             {todayCourses.map((course) => (
@@ -470,13 +485,13 @@ function ScheduleBoard({ user }: { user: IUserType }) {
 
       <section className='surface-card schedule-panel'>
         <div className='schedule-panel-head'>
-          <h2>冲突提示</h2>
+          <h2>时间冲突</h2>
           <span className={conflicts.length > 0 ? 'schedule-badge schedule-badge-warn' : 'schedule-badge'}>
             {conflicts.length} 处
           </span>
         </div>
         {conflicts.length === 0 ? (
-          <p className='schedule-empty'>没有检测到时间冲突。单双周交替的课程不会被误报。</p>
+          <p className='schedule-empty'>没有时间冲突。单双周交替的课也不会被误判。</p>
         ) : (
           <ul className='conflict-list'>
             {conflicts.map((conflict) => (
@@ -488,7 +503,7 @@ function ScheduleBoard({ user }: { user: IUserType }) {
 
       <section className='surface-card schedule-panel'>
         <div className='schedule-panel-head'>
-          <h2>学期设置</h2>
+          <h2>学期与节次</h2>
         </div>
         <div className='schedule-form-grid'>
           <label>
@@ -534,8 +549,23 @@ function ScheduleBoard({ user }: { user: IUserType }) {
             保存设置
           </button>
         </div>
-        {statusMessage ? <p className='schedule-muted'>{statusMessage}</p> : null}
       </section>
+
+      {/* 清空是破坏性操作，且很少用——放在最下面，不与日常动作相邻 */}
+      {courses.length > 0 ? (
+        <section className='surface-card schedule-danger-zone'>
+          <h2>清空课表</h2>
+          <p className='schedule-muted'>
+            会删掉全部 {courses.length} 门课程，账号和本机上的都会清掉，之后无法找回。
+            如果只是某几门课不对，单独编辑那几门更稳妥。
+          </p>
+          <div className='button-row'>
+            <button type='button' className='button-secondary' onClick={() => void handleClearAll()}>
+              清空全部课程
+            </button>
+          </div>
+        </section>
+      ) : null}
 
       </div>
       <SupportFab />

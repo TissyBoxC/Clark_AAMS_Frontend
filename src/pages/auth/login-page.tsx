@@ -141,6 +141,7 @@ function LoginPage() {
             {loginMethod === 'email' ? (
               <>
                 <label className='auth-scene-field'>
+                  <span className='auth-scene-field__label'>邮箱</span>
                   <span className='auth-scene-field__icon'>
                     <MailIcon />
                   </span>
@@ -148,13 +149,14 @@ function LoginPage() {
                     name='qqEmail'
                     type='email'
                     autoComplete='email'
-                    placeholder='邮箱'
+                    placeholder=''
                     value={qqEmail}
                     onChange={(event) => setQqEmail(event.target.value)}
                   />
                 </label>
 
                 <label className='auth-scene-field'>
+                  <span className='auth-scene-field__label'>密码</span>
                   <span className='auth-scene-field__icon'>
                     <LockIcon />
                   </span>
@@ -162,7 +164,7 @@ function LoginPage() {
                     name='password'
                     type={isPasswordVisible ? 'text' : 'password'}
                     autoComplete='current-password'
-                    placeholder='密码'
+                    placeholder=''
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                   />
@@ -178,13 +180,14 @@ function LoginPage() {
               </>
             ) : (
               <label className='auth-scene-field'>
+                <span className='auth-scene-field__label'>登录码</span>
                 <span className='auth-scene-field__icon'>
                   <CodeIcon />
                 </span>
                 <input
                   name='loginCode'
                   autoComplete='one-time-code'
-                  placeholder='登录码'
+                  placeholder=''
                   value={loginCode}
                   onChange={(event) => setLoginCode(event.target.value)}
                 />

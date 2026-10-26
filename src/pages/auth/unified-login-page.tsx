@@ -45,7 +45,7 @@ function redirectAllowedFor(role: UserRoleType, redirect: string): boolean {
 function UnifiedLoginPage() {
   const location = useLocation();
   const navigate = useTransitionNavigate();
-  const [message, setMessage] = useState<string>('正在识别登录方式。');
+  const [message, setMessage] = useState<string>('正在识别登录方式...');
 
   useEffect(() => {
     let isMounted = true;
@@ -78,7 +78,7 @@ function UnifiedLoginPage() {
           return;
         }
         if (!setup.configured && setup.registrationAvailable) {
-          setMessage('检测到后台尚未初始化，正在前往管理员注册。');
+          setMessage('这是第一次使用，正在带你去设置管理员账号。');
           navigate('/admin/register', { replace: true, delay: 0 });
           return;
         }
@@ -89,7 +89,7 @@ function UnifiedLoginPage() {
       if (!isMounted) {
         return;
       }
-      setMessage('正在前往登录页。');
+      setMessage('正在打开登录页...');
       const suffix = redirect ? `?redirect=${encodeURIComponent(redirect)}` : '';
       navigate(`/auth/login${suffix}`, { replace: true, delay: 0 });
     }

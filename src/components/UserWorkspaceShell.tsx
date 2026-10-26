@@ -29,7 +29,7 @@ const USER_WORKSPACE_NAV_ITEMS: IUserWorkspaceNavItemType[] = [
   {
     key: 'dashboard',
     href: '/user',
-    label: '仪表总览',
+    label: '今日概览',
     group: 'overview',
     icon: (
       <svg viewBox='0 0 24 24' fill='none'>
@@ -290,7 +290,7 @@ function UserWorkspaceShell({
           </div>
 
           <div className='dashboard-nav-group'>
-            <div className='dashboard-nav-title'>功能</div>
+            <div className='dashboard-nav-title'>导入与识别</div>
             {USER_WORKSPACE_NAV_ITEMS.filter((item) => item.group === 'tools').map((item) => {
               const isActive = item.key === activeNavKey;
 

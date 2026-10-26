@@ -1835,10 +1835,27 @@ select.form-input:focus {
   display: flex;
   align-items: center;
   min-height: 3.5rem;
-  border: 1px solid rgba(74, 62, 96, 0.18);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.34);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+}
+
+/* 可见标签：占位符一输入就没了，留不住「这是哪个字段」的信息 */
+.auth-scene-field__label {
+  position: absolute;
+  top: -0.55rem;
+  left: 0.95rem;
+  padding: 0 0.35rem;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+.auth-scene-field:focus-within {
+  border-color: var(--primary);
 }
 
 .auth-scene-field:focus-within,
@@ -3989,11 +4006,120 @@ body.dashboard-page::after {
 .schedule-empty {
   margin: 0;
   padding: 20px;
-  border: 1px dashed rgba(100, 116, 139, 0.35);
-  border-radius: 12px;
-  color: var(--text-muted, var(--muted));
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-soft);
+  color: var(--muted);
   text-align: center;
   font-size: 0.92rem;
+}
+
+/* 周切换条：把「翻周」与「加课」分开，前者是浏览，后者是修改 */
+.schedule-weekbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.schedule-weeknav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.schedule-weeknav-label {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 8.5rem;
+  text-align: center;
+}
+
+.schedule-weeknav-label strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.schedule-weeknav-label span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+/* 常用入口：两列列表而非三列卡片墙——四项并列时，列表更好扫读 */
+.quick-action-grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.quick-action {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color var(--duration-base) ease,
+    box-shadow var(--duration-base) ease;
+}
+
+.quick-action:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-action strong {
+  color: var(--text);
+  font-size: 0.98rem;
+}
+
+.quick-action span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+/* 破坏性操作区：与日常操作拉开距离，避免误点 */
+.schedule-danger-zone h2 {
+  margin: 0 0 0.4rem;
+  color: var(--danger);
+  font-size: 0.95rem;
+}
+
+.schedule-danger-zone {
+  border-color: var(--danger-soft);
+}
+
+/* 空课表：说清为什么是空的，并给出两条下一步 */
+.schedule-empty-block {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  padding: 2.25rem 1.5rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-soft);
+  text-align: center;
+}
+
+.schedule-empty-title {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.schedule-empty-copy {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
 }
 
 .schedule-badge {

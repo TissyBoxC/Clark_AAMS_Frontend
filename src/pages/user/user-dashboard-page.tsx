@@ -10,6 +10,14 @@ import { useAuthStore } from '../../store/auth-context';
 import { copyText } from '../../utils/clipboard';
 import { qqAvatarUrl } from '../../utils/avatar';
 
+/** 常用入口。放这里而不是只靠左侧导航，是因为多数人登录后第一件事就是进课表。 */
+const QUICK_ACTIONS = [
+  { href: '/user/schedule', title: '我的课表', copy: '看这一周有什么课' },
+  { href: '/user/import', title: '教务导入', copy: '从学校系统一次导入整学期' },
+  { href: '/user/recognition', title: '截图识别', copy: '拍下课表照片放进来' },
+  { href: '/user/pickup', title: '取件码回查', copy: '用 8 位码取回别人的课表' },
+];
+
 function UserDashboardPage() {
   const location = useLocation();
   const { refreshUser } = useAuthStore();
@@ -17,7 +25,7 @@ function UserDashboardPage() {
   const [accountStatus, setAccountStatus] = useState<string>('');
   const [accountStatusVariant, setAccountStatusVariant] = useState<'success' | 'error' | ''>('');
 
-  usePageMeta('用户中心', '查看 珂拉课程表 账户状态，并进入教务导入、课表识别和使用指南。');
+  usePageMeta('今日概览 · 珂拉课程表', '查看账号状态，快速进入课表、导入与识别。');
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -39,21 +47,21 @@ function UserDashboardPage() {
 
     try {
       await copyText(user.loginCode || '');
-      setAccountStatus('登录码已复制。');
+      setAccountStatus('登录码已复制，可以粘贴到其他设备登录。');
       setAccountStatusVariant('success');
     } catch {
-      setAccountStatus('没能复制，请选中账号手动复制。');
+      setAccountStatus('没能自动复制，请选中登录码手动复制。');
       setAccountStatusVariant('error');
     }
   }
 
   if (!isReady) {
-    return <LoadingView description='正在加载用户信息。' />;
+    return <LoadingView description='正在读取你的账号...' />;
   }
 
-  const displayName = user.username || `用户 ${user.id}`;
+  const displayName = user.username || '同学';
   const avatarUrl = qqAvatarUrl(user.email);
-  const emailText = user.email || '未填写邮箱';
+  const emailText = user.email || '还没有填写邮箱';
   const isVerified = Boolean(user.emailVerified);
   const analysisCount = Number(user.questionAnalysisCount || 0);
 
@@ -61,46 +69,62 @@ function UserDashboardPage() {
     <>
       <UserWorkspaceShell
         user={user}
-        title='用户中心'
-        description='查看账户状态，并从左侧菜单进入教务导入、课表识别、取件码回查和使用指南。'
+        title={`你好，${displayName}`}
+        description={
+          isVerified
+            ? '账号状态正常，下面的入口可以直接用。'
+            : '先完成邮箱验证，所有功能才会开放。'
+        }
       >
         {!isVerified ? (
           <div className='dashboard-alert' id='dashboard-email-alert'>
             <div>
-              <strong>邮箱尚未验证</strong>
-              <span>使用功能前需要先完成邮箱验证。完成验证后，这条提示会在刷新用户中心后自动消失。</span>
+              <strong>还差一步：验证邮箱</strong>
+              <span>
+                验证之后才能导入课表、识别截图和解析题目。验证完成后回到这一页，提示会自动消失。
+              </span>
             </div>
             <a className='inline-link' href='/auth/verify?notice=email-required'>
-              前往邮箱验证
+              去验证邮箱
             </a>
           </div>
         ) : null}
+
+        <section className='surface-card dashboard-card' id='quick-actions'>
+          <p className='eyebrow'>常用</p>
+          <h2>接下来想做什么</h2>
+          <div className='quick-action-grid'>
+            {QUICK_ACTIONS.map((action) => (
+              <a key={action.href} className='quick-action' href={action.href}>
+                <strong>{action.title}</strong>
+                <span>{action.copy}</span>
+              </a>
+            ))}
+          </div>
+        </section>
 
         <div className='dashboard-grid dashboard-grid-compact'>
           <div className='dashboard-column'>
             <section className='surface-card dashboard-card profile-summary' id='overview'>
               <div className='profile-banner'>
-                <p className='eyebrow'>账户概览</p>
+                <p className='eyebrow'>账号</p>
                 <h2 id='summary-title' className='profile-title'>
                   {displayName}
                 </h2>
-                <p id='summary-copy' hidden aria-hidden='true'>
-                  {isVerified ? '邮箱已验证，当前账户状态完整。' : '邮箱未验证，完成验证后即可使用功能菜单。'}
-                </p>
                 <img className='profile-avatar' id='summary-avatar' src={avatarUrl} alt='' />
               </div>
               <div className='profile-summary-body'>
                 <div className='metric-grid'>
                   <div className='metric-item'>
-                    <span>题目解析次数</span>
+                    <span>已解析题目</span>
                     <strong id='metric-analysis-count'>{analysisCount}</strong>
-                    <small>按后端成功返回结果累计</small>
+                    <small>每成功解析一道题加一次</small>
                   </div>
                   <div className='metric-item'>
-                    <span>邮箱状态</span>
-                    <strong id='metric-email-state'>{isVerified ? '已验证' : '未验证'}</strong>
+                    <span>邮箱</span>
+                    <strong id='metric-email-state'>{isVerified ? '已验证' : '待验证'}</strong>
                     <small id='metric-email-copy'>
-                      {isVerified ? '验证提示已关闭' : '验证通过后显示全部功能'}
+                      {isVerified ? '可以直接使用各项功能' : '验证后才能使用各项功能'}
                     </small>
                   </div>
                 </div>
@@ -110,50 +134,45 @@ function UserDashboardPage() {
 
           <div className='dashboard-column'>
             <section className='surface-card dashboard-card' id='account'>
-              <p className='eyebrow'>账户信息</p>
-              <h2>账户资料</h2>
+              <p className='eyebrow'>账号</p>
+              <h2>账号信息</h2>
               <div className='data-list' id='account-data-list'>
-                <div className='data-row'>
-                  <span>用户 ID</span>
-                  <strong>{user.id}</strong>
-                </div>
                 <div className='data-row'>
                   <span>用户名</span>
                   <strong>{displayName}</strong>
                 </div>
                 <div className='data-row'>
-                  <span>QQ 邮箱</span>
+                  <span>邮箱</span>
                   <strong>{emailText}</strong>
                 </div>
                 <div className='data-row'>
                   <span>邮箱状态</span>
-                  <strong>{isVerified ? '已验证' : '未验证'}</strong>
+                  <strong>{isVerified ? '已验证' : '待验证'}</strong>
                 </div>
                 <div className='data-row'>
                   <span>登录码</span>
                   <div className='data-value-inline'>
-                    <code aria-label='登录码已隐藏'>{user.loginCode ? '•••• •••• ••••' : '未生成'}</code>
+                    <code aria-label='登录码已隐藏'>{user.loginCode ? '•••• •••• ••••' : '还没生成'}</code>
                     <button className='mini-copy-button' type='button' onClick={() => void handleCopyLoginCode()}>
-                      复制
+                      复制登录码
                     </button>
                   </div>
-                </div>
-                <div className='data-row'>
-                  <span>题目解析次数</span>
-                  <strong>{analysisCount}</strong>
                 </div>
               </div>
               <div className='button-row dashboard-account-actions'>
                 {!isVerified ? (
                   <a className='button-secondary' href='/auth/verify?notice=email-required'>
-                    管理邮箱验证
+                    去验证邮箱
                   </a>
                 ) : null}
               </div>
               <div className={`form-status${accountStatusVariant ? ` ${accountStatusVariant}` : ''}`} id='account-status'>
                 {accountStatus}
               </div>
-              <p className='auth-foot'>登录码属于敏感凭证，请不要在公共设备或第三方聊天窗口里长期保存。</p>
+              <p className='auth-foot'>
+                登录码相当于另一把钥匙，拿到它的人可以登进你的账号。
+                在公共电脑上用完请退出登录。
+              </p>
             </section>
           </div>
         </div>

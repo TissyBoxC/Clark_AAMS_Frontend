@@ -228,6 +228,7 @@ function VerifyPage() {
 
           <form id='verify-page-form' className='auth-scene-form' onSubmit={handleSubmit}>
             <div className='auth-scene-field auth-scene-field--split'>
+              <span className='auth-scene-field__label'>QQ 邮箱</span>
               <label className='auth-scene-field__segment'>
                 <span className='auth-scene-field__icon'>
                   <MailIcon />
@@ -236,7 +237,7 @@ function VerifyPage() {
                   id='verify-email'
                   name='qqEmail'
                   autoComplete='email'
-                  placeholder='邮箱'
+                  placeholder=''
                   required
                   readOnly={isVerified}
                   value={emailPrefix}
@@ -272,13 +273,14 @@ function VerifyPage() {
             </div>
 
             <label className='auth-scene-field'>
+              <span className='auth-scene-field__label'>验证码</span>
               <span className='auth-scene-field__icon'>
                 <CodeIcon />
               </span>
               <input
                 name='code'
                 autoComplete='one-time-code'
-                placeholder='邮箱验证码'
+                placeholder=''
                 required
                 disabled={isVerified}
                 value={code}

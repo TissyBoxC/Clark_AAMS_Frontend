@@ -108,13 +108,14 @@ function RegisterPage() {
 
           <form id='register-form' className='auth-scene-form' onSubmit={handleSubmit}>
             <label className='auth-scene-field'>
+              <span className='auth-scene-field__label'>用户名</span>
               <span className='auth-scene-field__icon'>
                 <UserIcon />
               </span>
               <input
                 name='username'
                 autoComplete='username'
-                placeholder='用户名'
+                placeholder=''
                 required
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
@@ -122,6 +123,7 @@ function RegisterPage() {
             </label>
 
             <div className='auth-scene-field auth-scene-field--split'>
+              <span className='auth-scene-field__label'>QQ 邮箱</span>
               <label className='auth-scene-field__segment'>
                 <span className='auth-scene-field__icon'>
                   <MailIcon />
@@ -129,7 +131,7 @@ function RegisterPage() {
                 <input
                   name='qqEmailPrefix'
                   autoComplete='email'
-                  placeholder='邮箱'
+                  placeholder=''
                   required
                   value={qqEmailPrefix}
                   onChange={(event) => setQqEmailPrefix(event.target.value)}
@@ -144,14 +146,14 @@ function RegisterPage() {
             </div>
 
             <label className='auth-scene-field'>
+              <span className='auth-scene-field__label'>密码</span>
               <span className='auth-scene-field__icon'>
                 <LockIcon />
               </span>
               <input
                 name='password'
                 type={isPasswordVisible ? 'text' : 'password'}
-                autoComplete='new-password'
-                placeholder='密码'
+                placeholder=''
                 required
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
@@ -167,14 +169,14 @@ function RegisterPage() {
             </label>
 
             <label className='auth-scene-field'>
+              <span className='auth-scene-field__label'>再输一次密码</span>
               <span className='auth-scene-field__icon'>
                 <LockIcon />
               </span>
               <input
                 name='passwordConfirm'
                 type={isPasswordConfirmVisible ? 'text' : 'password'}
-                autoComplete='new-password'
-                placeholder='确认密码'
+                placeholder=''
                 required
                 value={passwordConfirm}
                 onChange={(event) => setPasswordConfirm(event.target.value)}
