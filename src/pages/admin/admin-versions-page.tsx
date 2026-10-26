@@ -319,7 +319,7 @@ function AdminVersionsPage() {
                       <h3>版本策略</h3>
                       <p className={styles.statusText}>维护最新版本与最低支持版本，用于判断可选更新和强制更新。</p>
                     </div>
-                    <span className={styles.codeTag}>Strategy</span>
+                    <span className={styles.codeTag}>更新策略</span>
                   </div>
                   <div className={styles.formGridTwo}>
                     <label className={styles.field}>
@@ -349,7 +349,7 @@ function AdminVersionsPage() {
                       <h3>更新文案</h3>
                       <p className={styles.statusText}>面向客户端弹窗展示的标题、可选更新说明与强制更新说明。</p>
                     </div>
-                    <span className={styles.codeTag}>Message</span>
+                    <span className={styles.codeTag}>提示文案</span>
                   </div>
                   <label className={styles.field}>
                     <span>更新标题</span>
@@ -371,7 +371,7 @@ function AdminVersionsPage() {
                       <h3>发布信息</h3>
                       <p className={styles.statusText}>维护发布页地址和多行发布说明，每行会提交为一个 release note。</p>
                     </div>
-                    <span className={styles.codeTag}>Release</span>
+                    <span className={styles.codeTag}>发布信息</span>
                   </div>
                   <label className={styles.field}>
                     <span>发布页地址</span>

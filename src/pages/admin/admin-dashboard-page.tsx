@@ -111,7 +111,7 @@ function AdminDashboardPage() {
       <div className={styles.pageGrid}>
         <section className={`${styles.panel} ${styles.heroCard}`}>
           <div>
-            <p className={styles.eyebrow}>Admin Console</p>
+            <p className={styles.eyebrow}>管理概览</p>
             <h2>后台能力概览</h2>
             <p className={styles.statusText}>这里保留各模块当前状态，具体操作入口统一放在右侧菜单栏，避免首页重复出现跳转按钮。</p>
           </div>

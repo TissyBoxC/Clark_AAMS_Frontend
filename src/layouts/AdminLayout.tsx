@@ -58,7 +58,7 @@ function AdminLayout({
           <img src='/site/logo.png' alt='' />
           <span className={styles.brandLockup}>
             <strong>珂拉课程表</strong>
-            <small>Operations</small>
+            <small>管理台</small>
           </span>
         </a>
 
@@ -66,7 +66,7 @@ function AdminLayout({
           <span className={styles.profileMeta}>当前区域</span>
           <strong>后台管理</strong>
           <span className={styles.profileMeta}>学校适配器、版本、AI 与邮件服务</span>
-          <span className={styles.profileSignal}>Production console</span>
+          <span className={styles.profileSignal}>线上环境</span>
         </div>
 
         <div className={styles.navSection}>
@@ -86,7 +86,7 @@ function AdminLayout({
         <div className={styles.navSection}>
           <div className={styles.sectionTitle}>站点入口</div>
           <a className={styles.navLink} href='/'>
-            <span className={styles.navIcon}>SITE</span>
+            <span className={styles.navIcon}>站点</span>
             <span>项目主页</span>
           </a>
           <a className={styles.navLink} href='/api'>

@@ -117,7 +117,7 @@ function AdminAiPage() {
           <div className={styles.panelBody}>
             <form className={styles.form} onSubmit={handleSave}>
               <label className={styles.field}>
-                <span>Base URL</span>
+                <span>服务地址</span>
                 <input className={styles.input} required placeholder='https://api.openai.com/v1' value={baseUrl} onChange={(event) => setBaseUrl(event.target.value)} />
               </label>
               <label className={styles.field}>

@@ -123,11 +123,11 @@ function AdminEmailPage() {
               </label>
               <div className={styles.formGridTwo}>
                 <label className={styles.field}>
-                  <span>Provider</span>
+                  <span>发送方式</span>
                   <input className={styles.input} placeholder='例如 smtp / qq-mail / custom-http' value={config.provider} onChange={(event) => setConfig((previous) => ({ ...previous, provider: event.target.value }))} />
                 </label>
                 <label className={styles.field}>
-                  <span>Endpoint</span>
+                  <span>服务器地址</span>
                   <input className={styles.input} placeholder='例如 smtps://smtp.qq.com:465' value={config.endpoint} onChange={(event) => setConfig((previous) => ({ ...previous, endpoint: event.target.value }))} />
                 </label>
               </div>
@@ -180,8 +180,8 @@ function AdminEmailPage() {
             <div className={styles.statusBox}>{currentStatus}</div>
             <div className={styles.stack}>
               <div className={styles.metric}>
-                <span>Provider</span>
-                <strong>{config.provider || '未设置'}</strong>
+                <span>发送方式</span>
+                <strong>{config.provider || '还没有选'}</strong>
               </div>
               <div className={styles.metric}>
                 <span>发件邮箱</span>
