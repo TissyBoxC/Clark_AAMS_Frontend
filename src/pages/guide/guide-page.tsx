@@ -82,18 +82,21 @@ function GuidePage() {
           <div className='guide-sidebar__meta'>
             <p className='eyebrow'>{entry.group}</p>
             <p>{entry.summary}</p>
-            <small>当前分组共 {currentGroupEntryCount} 篇指南。</small>
+            <small>这一类共有 {currentGroupEntryCount} 篇</small>
           </div>
-          <input
-            className='guide-search'
-            type='search'
-            placeholder='搜索指南页面'
-            value={searchKeyword}
-            onChange={(event) => setSearchKeyword(event.target.value)}
-          />
-          <div className='guide-search-meta'>
-            {searchKeyword ? `已根据 “${searchKeyword}” 过滤目录` : '支持按页面名称搜索与分组浏览'}
-          </div>
+          <label className='guide-search-field'>
+            <span className='guide-search-field__label'>搜索指南</span>
+            <input
+              className='guide-search'
+              type='search'
+              placeholder='输入关键词'
+              value={searchKeyword}
+              onChange={(event) => setSearchKeyword(event.target.value)}
+            />
+          </label>
+          {searchKeyword ? (
+            <div className='guide-search-meta'>已筛选出包含 “{searchKeyword}” 的内容</div>
+          ) : null}
 
           <nav className='guide-nav' aria-label='用户指南目录'>
             {groupedEntries.map(([groupName, entries]) => {
@@ -133,6 +136,12 @@ function GuidePage() {
                 </div>
               );
             })}
+
+            {groupedEntries.length === 0 ? (
+              <p className='guide-nav-empty'>
+                没有找到包含 “{searchKeyword}” 的指南，换个词试试，或清空搜索看全部。
+              </p>
+            ) : null}
           </nav>
         </aside>
 
@@ -146,11 +155,14 @@ function GuidePage() {
           ) : null}
           {!isLoading && errorMessage ? (
             <section className='guide-panel'>
-              <h2>指南内容读取失败</h2>
+              <h2>这篇指南暂时打不开</h2>
               <p>{errorMessage}</p>
-              <a className='inline-link' href={`/legacy/user-guide/${entry.slug}.html`} target='_blank' rel='noreferrer'>
-                打开原始静态页面
-              </a>
+              <p className='schedule-muted'>可以先回到目录看别的部分，或者稍后再打开这篇。</p>
+              <div className='button-row'>
+                <a className='button-secondary' href='/docs/user-guide/intro'>
+                  回到指南首页
+                </a>
+              </div>
             </section>
           ) : null}
           {!isLoading && !errorMessage ? <div className='guide-reading-body' dangerouslySetInnerHTML={{ __html: articleHtml }}></div> : null}
