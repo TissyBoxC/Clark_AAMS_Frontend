@@ -36,6 +36,7 @@ const AdminEmailPage = lazy(() => import('../pages/admin/admin-email-page'));
 const AdminSchoolsPage = lazy(() => import('../pages/admin/admin-schools-page'));
 const AdminVersionsPage = lazy(() => import('../pages/admin/admin-versions-page'));
 const AdminPickupsPage = lazy(() => import('../pages/admin/admin-pickups-page'));
+const AdminQuotaPage = lazy(() => import('../pages/admin/admin-quota-page'));
 const NotFoundPage = lazy(() => import('../pages/shared/not-found-page'));
 
 interface IAliasRedirectPropsType {
@@ -334,6 +335,16 @@ export function AppRouter() {
             }
           />
           <Route path='/admin/pickups.html' element={<AliasRedirect to='/admin/pickups' />} />
+
+          <Route
+            path='/admin/quota'
+            element={
+              <ProtectedRoute allow={['admin']}>
+                <AdminQuotaPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/admin/quota.html' element={<AliasRedirect to='/admin/quota' />} />
 
           <Route path='*' element={<NotFoundPage />} />
         </Routes>

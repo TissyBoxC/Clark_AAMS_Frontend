@@ -20,6 +20,7 @@ import type {
   JsonValueType,
   ISchoolScaffoldPayloadType,
 } from '../types/app-types';
+import type { IQuotaDashboardType } from '../utils/quota-dashboard.ts';
 
 import { requestEnvelope } from './http';
 
@@ -314,4 +315,10 @@ export async function deleteAdminCoursePickupImage(
       includeAuth: false,
     },
   );
+}
+
+export async function fetchQuotaDashboard(): Promise<IQuotaDashboardType> {
+  return requestEnvelope<IQuotaDashboardType>('/api/v1/admin/quota', {
+    includeAuth: false,
+  });
 }

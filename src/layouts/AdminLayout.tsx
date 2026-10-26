@@ -14,7 +14,8 @@ interface IAdminLayoutPropsType {
     | 'versions'
     | 'ai'
     | 'email'
-    | 'pickups';
+    | 'pickups'
+    | 'quota';
   badgeText?: string;
   actions?: ReactNode;
   children: ReactNode;
@@ -27,6 +28,7 @@ const NAV_ITEMS = [
   { key: 'ai', href: '/admin/ai', label: 'AI 识别配置', icon: 'AI' },
   { key: 'email', href: '/admin/email', label: '邮箱配置', icon: 'MAIL' },
   { key: 'pickups', href: '/admin/pickups', label: '取件码管理', icon: 'JSON' },
+  { key: 'quota', href: '/admin/quota', label: '配额看板', icon: 'AI' },
 ] as const;
 
 function AdminLayout({
