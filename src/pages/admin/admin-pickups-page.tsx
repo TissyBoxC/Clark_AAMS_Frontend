@@ -23,7 +23,7 @@ function AdminPickupsPage() {
   const [selectedRecord, setSelectedRecord] = useState<ICoursePickupRecordType | null>(null);
   const [detailJsonText, setDetailJsonText] = useState<string>('');
   const [manualJsonText, setManualJsonText] = useState<string>('[]');
-  const [manualStatus, setManualStatus] = useState<string>('取件码将由后端随机分配。');
+  const [manualStatus, setManualStatus] = useState<string>('取件码会自动随机生成。');
   const [listStatus, setListStatus] = useState<string>('未加载');
   const [detailStatus, setDetailStatus] = useState<string>('请选择记录');
 

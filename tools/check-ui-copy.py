@@ -79,7 +79,7 @@ SKIP_LINE = re.compile(r'^\s*(//|\*|/\*|import\s|from\s|class(Name)?=|style=|dat
 DEV_FACING_FILES = ('api-page.tsx',)
 
 # 出现这些说明是代码而不是文案
-CODE_HINT = re.compile(r'(=>|\bfunction\b|\bconst\b|\breturn\b|\.test\(|\.match\(|regex|RegExp|^\s*[\w-]+\s*:\s*[\w-]+\s*$)')
+CODE_HINT = re.compile(r'(=>|\bfunction\b|\breturn\b|\.test\(|\.match\(|regex|RegExp|^\s*[\w-]+\s*:\s*[\w-]+\s*$)')
 
 
 def scan_file(path: str):
@@ -125,8 +125,12 @@ def collect(directory: str, extensions: tuple) -> list:
     results = []
     for base, _, names in os.walk(directory):
         for name in names:
-            if name.endswith(extensions):
-                results.extend(scan_file(os.path.join(base, name)))
+            if not name.endswith(extensions):
+                continue
+            # 测试文件里必然写着违规样本（否则没法验证检查器），不参与扫描
+            if name.endswith(('.test.ts', '.test.tsx', '_test.dart')):
+                continue
+            results.extend(scan_file(os.path.join(base, name)))
     return results
 
 
