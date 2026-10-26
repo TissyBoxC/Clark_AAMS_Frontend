@@ -35,10 +35,10 @@ function AdminAiPage() {
       setApiKey('');
       setClearApiKey(false);
       setKeyState(config.apiKeyConfigured ? '已保存访问密钥' : '还没有填写访问密钥');
-      setSaveStatus('配置已加载');
+      setSaveStatus('设置已读取');
     } catch (error) {
       setSaveStatus(userMessageFor(error));
-      setKeyState('读取失败');
+      setKeyState('没能读取到，可以刷新重试');
     }
   }
 

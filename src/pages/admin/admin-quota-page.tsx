@@ -45,11 +45,11 @@ function AdminQuotaPage() {
     try {
       const next = await fetchQuotaDashboard();
       setDashboard(next);
-      setStatus(`已加载，共 ${next.totalCalls} 次调用`);
+      setStatus(`已读取，共 ${next.totalCalls} 次调用`);
       setErrorMessage('');
     } catch (error) {
       setDashboard(null);
-      setStatus('读取失败');
+      setStatus('没能读取到用量，可以稍后刷新重试');
       setErrorMessage(
         userMessageFor(error),
       );

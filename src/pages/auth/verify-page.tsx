@@ -214,7 +214,7 @@ function VerifyPage() {
     : isCooldownActive
       ? `${cooldownSeconds} 秒后可重新发送`
       : '发送验证码';
-  const primaryButtonLabel = hasSentCode ? (isSubmitting ? '校验中...' : '校验验证码') : sendCodeLabel;
+  const primaryButtonLabel = hasSentCode ? (isSubmitting ? '正在确认...' : '确认验证码') : sendCodeLabel;
   const primaryButtonDisabled = isVerified || isSending || isSubmitting || (!hasSentCode && isCooldownActive);
 
   return (
@@ -222,13 +222,18 @@ function VerifyPage() {
       <AuthSceneLayout>
         <section className='auth-scene-card'>
           <div className='auth-scene-card__header'>
-            <h1>邮箱验证</h1>
-            <p>{isVerified ? '当前邮箱已经完成验证。' : '发送验证码并完成确认后，将自动返回用户中心。'}</p>
+            <h1>验证你的邮箱</h1>
+            {/* 用户是被跳转过来的，不说明原因他会以为出了问题 */}
+            <p>
+              {isVerified
+                ? '这个邮箱已经验证过了，可以直接使用。'
+                : '验证邮箱是为了在忘记密码时能找回账号，也方便我们联系到你。填好邮箱、收一条验证码就能完成，完成后会自动回到刚才的页面。'}
+            </p>
           </div>
 
           <form id='verify-page-form' className='auth-scene-form' onSubmit={handleSubmit}>
             <div className='auth-scene-field auth-scene-field--split'>
-              <span className='auth-scene-field__label'>QQ 邮箱</span>
+              <span className='auth-scene-field__label'>邮箱</span>
               <label className='auth-scene-field__segment'>
                 <span className='auth-scene-field__icon'>
                   <MailIcon />

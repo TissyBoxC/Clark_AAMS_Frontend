@@ -12,12 +12,12 @@ import styles from './admin-pages.module.css';
 
 function AdminDashboardPage() {
   const [healthStatus, setHealthStatus] = useState<string>('检查中');
-  const [pickupsCount, setPickupsCount] = useState<string>('加载中');
-  const [schoolsState, setSchoolsState] = useState<string>('加载中');
-  const [latestVersion, setLatestVersion] = useState<string>('加载中');
-  const [minimumVersion, setMinimumVersion] = useState<string>('加载中');
-  const [aiState, setAiState] = useState<string>('加载中');
-  const [emailState, setEmailState] = useState<string>('加载中');
+  const [pickupsCount, setPickupsCount] = useState<string>('读取中…');
+  const [schoolsState, setSchoolsState] = useState<string>('读取中…');
+  const [latestVersion, setLatestVersion] = useState<string>('读取中…');
+  const [minimumVersion, setMinimumVersion] = useState<string>('读取中…');
+  const [aiState, setAiState] = useState<string>('读取中…');
+  const [emailState, setEmailState] = useState<string>('读取中…');
   const [loadSummary, setLoadSummary] = useState<string>('正在读取当前状态...');
 
   useBodyClass('admin-route');
