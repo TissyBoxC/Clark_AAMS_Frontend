@@ -45,12 +45,16 @@ function collectCssFiles(directory: string): string[] {
 }
 
 /**
- * 主题定义块：`:root` 与暗色 `:root` 里**应当**出现具体颜色值，
- * 那里就是 token 的唯一定义处。统计时要排除。
+ * 主题定义块：`:root`、`html[data-theme='light'|'dark']` 里**应当**出现
+ * 具体颜色值，那里就是 token 的唯一定义处。统计时要排除。
+ *
+ * 后两者是后加的手动主题覆盖块——它们和 `:root` 一样是定义处，
+ * 不是「业务代码里写死的颜色」，所以一并排除。
  */
 function stripTokenDefinitions(source: string): string {
-  // 去掉所有 :root { ... } 块（含暗色主题里的那份）
-  return source.replace(/:root\s*\{[^}]*\}/g, '');
+  return source
+    .replace(/:root\s*\{[^}]*\}/g, '')
+    .replace(/html\[data-theme='(?:light|dark)'\]\s*\{[^}]*\}/g, '');
 }
 
 /** 去掉注释，避免示例代码被计入。 */

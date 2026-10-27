@@ -65,9 +65,9 @@ function HomePage() {
 
         <section className='section-shell home-section' id='capabilities'>
           <div className='section-heading'>
-            <p className='eyebrow'>Features</p>
-            <h2>三种方式把课表放进来看得懂的地方。</h2>
-            <p>不在官网里打断操作。登录后进入用户中心，再选择导入、识别或取件码回查。</p>
+            <p className='eyebrow'>三种导入方式</p>
+            <h2>课表怎么进来，你选一种就行。</h2>
+            <p>可以从教务系统一键读取，也可以传一张课表截图，或者用取件码取回之前存过的课表。</p>
           </div>
           <div className='feature-grid'>
             <article className='surface-card feature-card'>
@@ -91,7 +91,7 @@ function HomePage() {
         <section className='section-shell home-section home-process'>
           <div className='section-heading'>
             <p className='eyebrow'>使用方式</p>
-            <h2>登录后，课表、导入和识别都在同一个地方。</h2>
+            <h2>登录之后，这些都在一起。</h2>
           </div>
           <div className='home-process-grid'>
             <article className='surface-card home-process-step'>
