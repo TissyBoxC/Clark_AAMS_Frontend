@@ -91,4 +91,21 @@ describe('文案检查器必须真的能发现问题', () => {
     const { code, output } = runChecker('--web', '  <p>服务地址填到 /v1 就够了。</p>\n');
     assert.equal(code, 0, `/v1 是正当内容，不该报错，实际输出：${output}`);
   });
+
+  it('能抓到把异常拼进文案的原始错误渲染', () => {
+    const { code, output } = runChecker(
+      '--app',
+      "  static String importFailed(Object error) => '导入失败：$error';\n",
+    );
+    assert.equal(code, 1, '原始错误渲染必须被拦下');
+    assert.match(output, /原始错误/);
+  });
+
+  it('改写后的错误文案不含异常内容，不应被误报', () => {
+    const { code, output } = runChecker(
+      '--app',
+      "  static String importFailed(Object error) => '这次导入没有成功，换用图片导入再试。';\n",
+    );
+    assert.equal(code, 0, `不该报错，实际输出：${output}`);
+  });
 });
