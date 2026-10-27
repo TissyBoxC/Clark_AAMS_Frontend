@@ -23,13 +23,13 @@ function AdminEntryPage() {
   const navigate = useTransitionNavigate();
 
   useBodyClass('admin-route');
-  usePageMeta('后台入口', '珂拉课程表 后台入口。');
+  usePageMeta('管理台 · 珂拉课程表', '正在进入管理台。');
 
   useEffect(() => {
     navigate('/admin/dashboard', { replace: true, delay: 0 });
   }, [navigate]);
 
-  return <LoadingView description='正在进入后台工作台。' />;
+  return <LoadingView description='正在进入管理台…' />;
 }
 
 export default AdminEntryPage;

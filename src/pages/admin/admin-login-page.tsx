@@ -21,7 +21,7 @@ function AdminLoginPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useBodyClass('admin-route');
-  usePageMeta('后台登录', '珂拉课程表 后台登录页。');
+  usePageMeta('管理员登录 · 珂拉课程表', '登录珂拉课程表的管理台。');
 
   const redirectUrl = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -69,7 +69,7 @@ function AdminLoginPage() {
     const normalizedUsername = username.trim();
 
     if (!normalizedUsername || !password) {
-      setStatusMessage('请填写后台账号和密码。');
+      setStatusMessage('请填写管理员账号和密码。');
       return;
     }
 
@@ -94,7 +94,7 @@ function AdminLoginPage() {
   }
 
   if (isChecking) {
-    return <LoadingView description='正在检查后台初始化状态。' />;
+    return <LoadingView description='正在检查是否已经设置过管理员…' />;
   }
 
   return (
@@ -105,7 +105,7 @@ function AdminLoginPage() {
             <img src='/site/logo.png' alt='' />
             <span>
               <strong>珂拉课程表</strong>
-                <small>后台运维</small>
+                <small>管理员专用</small>
             </span>
           </a>
           <div>
@@ -123,8 +123,8 @@ function AdminLoginPage() {
         <section className={`${styles.panel} ${styles.authCard}`}>
         <div className={styles.panelHead}>
           <div>
-            <p className={styles.eyebrow}>后台入口</p>
-            <h2>珂拉课程表 后台登录</h2>
+            <p className={styles.eyebrow}>管理员</p>
+            <h2>登录珂拉课程表管理台</h2>
             <p>登录后可以管理学校、版本、识别设置和取件码。</p>
           </div>
         </div>

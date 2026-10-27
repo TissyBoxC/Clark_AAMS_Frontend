@@ -115,7 +115,7 @@ function AdminRegisterPage() {
           <div>
             <p className={styles.eyebrow}>初始化</p>
             <h2>创建首个管理员账号</h2>
-            <p>该页面仅在后台尚未完成初始化时可用。创建成功后将自动进入后台管理台。</p>
+            <p>这一步只在还没设置过管理员时出现。建好之后会自动进入管理台，并从这个页面离开。</p>
           </div>
         </div>
         <div className={styles.panelBody}>

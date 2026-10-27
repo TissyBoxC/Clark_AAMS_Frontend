@@ -33,6 +33,7 @@ TECHNICAL = [
     r'\bNaN\b', r'\[object Object\]', r'localhost', r'127\.0\.0\.1', r'\bport\b',
     r'环境变量', r'\bmock\b', r'Swagger', r'console\b', r'\blog\b', r'stack trace',
     r'接口', r'会话', r'堆栈', r'后端', r'前端', r'数据库', r'配置项', r'API ?Key',
+    r'后台管理', r'后台入口', r'后台登录',
     # 文件格式与缩写：App 里曾写着「使用OCR导入」「粘贴课程 JSON 数组」，
     # 管理端写着「保存 JSON」，用户都看不懂。
     r'\bOCR\b', r'\bJSON\b', r'\bHTML\b', r'\bXML\b', r'\bSDK\b', r'\bBuild\b',
