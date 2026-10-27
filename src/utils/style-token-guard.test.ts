@@ -18,12 +18,31 @@
  */
 
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { test } from 'node:test';
 
 const cssPath = resolve(process.cwd(), 'src/styles/index.css');
 const css = readFileSync(cssPath, 'utf8');
+
+/**
+ * 收集 `src` 下所有 CSS 文件。
+ *
+ * 之前所有守卫只看 `src/styles/index.css`，而实际上还有 4 个文件
+ * （`App.css`、两个 `.module.css`）从未被扫过——紫蓝色就是那么留下的。
+ */
+function collectCssFiles(directory: string): string[] {
+  const found: string[] = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const full = join(directory, entry.name);
+    if (entry.isDirectory()) {
+      found.push(...collectCssFiles(full));
+    } else if (entry.name.endsWith('.css')) {
+      found.push(full);
+    }
+  }
+  return found;
+}
 
 /**
  * 主题定义块：`:root` 与暗色 `:root` 里**应当**出现具体颜色值，
@@ -131,4 +150,42 @@ test('暗色主题仍然定义了 surface 系列', () => {
       `暗色主题缺少 ${token}——该项在暗色下会退回浅色值`,
     );
   }
+});
+
+/*
+ * 紫蓝色扫描。
+ *
+ * 背景：粉白改色时只换了 `:root` 里的 token，**组件里的硬编码紫色没跟上**。
+ * 登录页的选中标签、用户工作台的导航链接、账号菜单按钮，一共 11 处
+ * 仍是 `#664be0` 这一系紫色。人工翻 4000 行 CSS 找不全。
+ *
+ * 判定：蓝色分量比红、绿都高出 24 以上 —— 那是紫蓝的特征。
+ * 两个例外：
+ * - `#66ccff` 是规范允许的点缀蓝；
+ * - 课程色带的兜底色 `#2563eb` 属于功能色（用来区分不同课程），
+ *   App 端同样保留。
+ */
+test('样式里不出现紫蓝色', () => {
+  const allowed = new Set(['66ccff', '2563eb']);
+  const offenders: string[] = [];
+
+  for (const file of collectCssFiles(resolve(process.cwd(), 'src'))) {
+    const lines = readFileSync(file, 'utf8').split('\n');
+    lines.forEach((line, index) => {
+      const trimmed = line.trimStart();
+      if (trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+      for (const match of line.matchAll(/#([0-9a-fA-F]{6})\b/g)) {
+        const hex = match[1].toLowerCase();
+        if (allowed.has(hex)) continue;
+        const [r, g, b] = [0, 2, 4].map((offset) =>
+          Number.parseInt(hex.slice(offset, offset + 2), 16),
+        );
+        if (b > r + 24 && b > g + 24) {
+          offenders.push(`${file}:${index + 1} #${hex}`);
+        }
+      }
+    });
+  }
+
+  assert.deepEqual(offenders, [], `发现紫蓝色，粉白规范不允许：\n${offenders.join('\n')}`);
 });

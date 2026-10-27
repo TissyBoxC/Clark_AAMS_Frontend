@@ -1821,7 +1821,7 @@ select.form-input:focus {
 
 .auth-scene-tabs button.active {
   background: rgba(255, 255, 255, 0.92);
-  color: #5d49b5;
+  color: var(--primary-strong);
   box-shadow: 0 10px 20px rgba(118, 97, 186, 0.12);
 }
 
@@ -1983,7 +1983,7 @@ select.form-input:focus {
   border: 1px solid rgba(119, 102, 206, 0.14);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.7);
-  color: #7a61ce;
+  color: var(--primary-strong);
   font: inherit;
   font-weight: 700;
   text-decoration: none;
@@ -3329,7 +3329,7 @@ body.dashboard-page::after {
   padding: 0.55rem 0.7rem;
   border: 1px solid rgba(118, 95, 226, 0);
   border-radius: 1.35rem;
-  color: #46405f;
+  color: var(--primary-strong);
   font-weight: 800;
 }
 
@@ -3348,7 +3348,7 @@ body.dashboard-page::after {
 .dashboard-page .dashboard-nav-link:hover {
   border-color: rgba(118, 95, 226, 0.035);
   background: linear-gradient(90deg, rgba(122, 103, 226, 0.095), rgba(255, 255, 255, 0.48));
-  color: #664be0;
+  color: var(--primary);
   box-shadow: 0 12px 28px rgba(102, 75, 224, 0.055);
 }
 
@@ -3528,7 +3528,7 @@ body.dashboard-page::after {
   height: 1.7rem;
   border-radius: 999px;
   background: rgba(123, 94, 229, 0.1);
-  color: #6a50db;
+  color: var(--primary-strong);
   transition:
     transform 160ms ease,
     background-color 160ms ease,
@@ -3583,7 +3583,7 @@ body.dashboard-page::after {
 .dashboard-page .dashboard-account-menu-item:hover,
 .dashboard-page .dashboard-account-menu-item:focus-visible {
   background: rgba(123, 94, 229, 0.1);
-  color: #5f42d6;
+  color: var(--primary);
   outline: none;
 }
 
@@ -3811,7 +3811,7 @@ body.dashboard-page::after {
   border: 1px solid rgba(114, 87, 229, 0.16);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.76);
-  color: #684bdf;
+  color: var(--primary);
   font: inherit;
   font-size: 0.86rem;
   font-weight: 900;
@@ -3839,7 +3839,7 @@ body.dashboard-page::after {
   min-height: 3rem;
   padding-inline: 1.35rem;
   border-radius: 999px;
-  background: linear-gradient(135deg, #7b5ee5, #6546d5);
+  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
   box-shadow: 0 18px 34px rgba(102, 70, 213, 0.22);
 }
 
@@ -3855,7 +3855,7 @@ body.dashboard-page::after {
 }
 
 .dashboard-page .support-fab {
-  background: linear-gradient(135deg, #80a7ff, #6f8df2);
+  background: linear-gradient(135deg, var(--pink-soft), var(--primary));
   box-shadow: 0 18px 38px rgba(99, 132, 234, 0.34);
 }
 
