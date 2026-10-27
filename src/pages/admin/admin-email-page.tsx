@@ -103,7 +103,7 @@ function AdminEmailPage() {
           <div className={styles.panelHead}>
             <div>
               <h2>发送服务配置</h2>
-              <p>支持 SMTP、QQ 邮箱授权码或自定义 HTTP Provider。</p>
+              <p>用哪个邮箱发验证码在这里设置。可以用 QQ 邮箱的授权码，也可以填自己的发信服务地址。</p>
             </div>
             <div className={styles.actions}>
               <button className={styles.buttonSecondary} type='button' onClick={() => void loadConfig()}>
@@ -151,7 +151,7 @@ function AdminEmailPage() {
               </label>
               <label className={styles.check}>
                 <input type='checkbox' checked={clearApiKey} onChange={(event) => setClearApiKey(event.target.checked)} />
-                清空已保存的密钥或 SMTP 授权码
+                清空已保存的授权码
               </label>
               <label className={styles.field}>
                 <span>邮件内容模板</span>
@@ -192,7 +192,7 @@ function AdminEmailPage() {
                 <strong>{config.senderName || '还没有填写'}</strong>
               </div>
             </div>
-            <p className={styles.hint}>常见方案：QQ 邮箱使用 SMTP 授权码；如果走自定义 HTTP Provider，可将 endpoint 配置为自建邮件网关地址。</p>
+            <p className={styles.hint}>多数人用 QQ 邮箱：到 QQ 邮箱设置里开启发信服务，拿到一串授权码填在下面。如果学校自建了邮局，把它的发信地址填进来即可。</p>
           </div>
         </section>
       </div>

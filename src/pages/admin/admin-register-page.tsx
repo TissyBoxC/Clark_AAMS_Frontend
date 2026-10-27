@@ -19,7 +19,7 @@ function AdminRegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useBodyClass('admin-route');
-  usePageMeta('管理员初始化注册', '珂拉课程表 首个管理员账号初始化页。');
+  usePageMeta('设置管理员账号 · 珂拉课程表', '第一次使用时的管理员账号设置。');
 
   useEffect(() => {
     let isMounted = true;
@@ -100,13 +100,13 @@ function AdminRegisterPage() {
           </a>
           <div>
             <p className={styles.eyebrow}>首个管理员</p>
-            <h1>初始化页面只出现一次，所以必须把风险和下一步说清楚。</h1>
-            <p className={styles.statusText}>创建首个管理员后，注册入口会自动关闭；后续所有后台操作都从登录页进入。</p>
+            <h1>设置管理员账号</h1>
+            <p className={styles.statusText}>这一步只会出现一次。建好账号后，这个入口就会自动关闭，之后再进管理台都从登录页进。请把密码存好，忘记后只能到服务器上重置。</p>
           </div>
           <div className={styles.adminAuthSignals}>
-              <span>一次性初始化</span>
-              <span>需要密码</span>
-              <span>完成后关闭</span>
+              <span>只出现一次</span>
+              <span>密码要记牢</span>
+              <span>建好后入口关闭</span>
           </div>
         </aside>
 

@@ -37,6 +37,8 @@ TECHNICAL = [
     # 管理端写着「保存 JSON」，用户都看不懂。
     r'\bOCR\b', r'\bJSON\b', r'\bHTML\b', r'\bXML\b', r'\bSDK\b', r'\bBuild\b',
     r'适配器', r'脚手架', r'代码骨架', r'/api/', r'/chat/',
+    # 这几个词只在配置说明里出现过，且都出现在用户要读的句子里
+    r'Provider', r'endpoint', r'SMTP',
     # 别把 /v1 单独列成违规：管理员填服务地址时它必须出现，那是正当内容。
 ]
 
