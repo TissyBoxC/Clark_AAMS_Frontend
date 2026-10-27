@@ -40,6 +40,14 @@ TECHNICAL = [
     # 别把 /v1 单独列成违规：管理员填服务地址时它必须出现，那是正当内容。
 ]
 
+# 原始错误渲染：把异常对象/状态码直接拼进用户能看到的文案。
+# App 里曾有 8 处写着「导入失败：$error」，用户会看到
+# 「导入失败：SocketException: Failed host lookup」。
+RAW_ERROR = [
+    r'：\$error', r': \$error', r'：\$e', r'\$\{error\}', r'\$\{e\}',
+    r'\$statusCode', r'\$\{statusCode\}', r'\$response', r'\$payload',
+]
+
 # 开发提示：写给开发者看的话
 DEVELOPER = [
     r'检查控制台', r'检查网络', r'查看日志', r'开发中', r'即将上线', r'TODO', r'FIXME',
@@ -60,6 +68,7 @@ PATTERNS = (
     + [(re.compile(p, re.I), '开发提示') for p in DEVELOPER]
     + [(re.compile(p, re.I), '营销语') for p in MARKETING]
     + [(re.compile(p), '空状态') for p in EMPTY_ONLY]
+    + [(re.compile(p), '原始错误') for p in RAW_ERROR]
 )
 
 # 中文字符串字面量；单引号、双引号、反引号都算
@@ -79,7 +88,7 @@ SKIP_LINE = re.compile(r'^\s*(//|\*|/\*|import\s|from\s|class(Name)?=|style=|dat
 DEV_FACING_FILES = ('api-page.tsx',)
 
 # 出现这些说明是代码而不是文案
-CODE_HINT = re.compile(r'(=>|\bfunction\b|\breturn\b|\.test\(|\.match\(|regex|RegExp|^\s*[\w-]+\s*:\s*[\w-]+\s*$)')
+CODE_HINT = re.compile(r'(\bfunction\b|\breturn\b|\.test\(|\.match\(|regex|RegExp|^\s*[\w-]+\s*:\s*[\w-]+\s*$)')
 
 
 def scan_file(path: str):
