@@ -1,15 +1,17 @@
-import ThemeToggle from './components/ThemeToggle.tsx';
-import { AppRouter } from './router/index.tsx';
-import { AuthProvider } from './store/auth-store';
+import { BrowserRouter } from 'react-router-dom';
 
-function App() {
+import AppRoutes from './router';
+import { ToastProvider } from './components/ToastHost';
+import { AuthProvider } from './store/auth';
+
+export default function App() {
   return (
-    <AuthProvider>
-      <AppRouter />
-      {/* 全站常驻：明暗主题切换。放在 Router 外层，任何页面都能用 */}
-      <ThemeToggle />
-    </AuthProvider>
+    <BrowserRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </ToastProvider>
+    </BrowserRouter>
   );
 }
-
-export default App;

@@ -1,0 +1,135 @@
+/*
+ * 珂拉课程表 · 设计令牌
+ *
+ * 两套模式共用一套尺度（字号、间距、圆角、动效），
+ * 只在“表面深浅”上分开：
+ *   - 学生侧：柔和的浅色界面，白色卡片 + 带色相的柔和阴影
+ *   - 管理侧：macOS 深灰三层，靠背景深浅建立层级，不用渐变与发光
+ *
+ * 文字颜色不是纯黑（规范禁止），正文用 #55596B，
+ * 在白底与 #F6F6FB 上分别是 7.4:1 / 7.0:1，满足 AA。
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  color-scheme: light;
+
+  /* 字体：标题用衬线，正文用无衬线，编码用等宽 */
+  --font-display: 'Noto Serif SC', 'Songti SC', 'STSong', Georgia, serif;
+  --font-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+  /* 字号阶梯 */
+  --text-hero: clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem);
+  --text-h1: clamp(1.75rem, 1.4rem + 1.3vw, 2.5rem);
+  --text-h2: clamp(1.375rem, 1.2rem + 0.7vw, 1.875rem);
+  --text-h3: 1.125rem;
+  --text-body: 0.9375rem;
+  --text-small: 0.8125rem;
+  --text-tiny: 0.75rem;
+
+  /* 间距（4px 基数） */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+  --sp-9: 6rem;
+
+  /* 圆角：控件 14、卡片 22、大表面 28 */
+  --r-sm: 0.75rem;
+  --r-md: 0.875rem;
+  --r-lg: 1.125rem;
+  --r-xl: 1.375rem;
+  --r-2xl: 1.75rem;
+  --r-pill: 999px;
+
+  /* 浅色表面 */
+  --canvas: #f6f6fb;
+  --canvas-deep: #efeff8;
+  --surface: #ffffff;
+  --surface-sunken: #f2f2f9;
+  --surface-raised: #ffffff;
+
+  /* 文字 */
+  --ink-900: #23252f;
+  --ink-700: #3c3f52;
+  --ink-600: #55596b;
+  --ink-500: #6d7186;
+  --ink-400: #8f93a6;
+  --ink-inverse: #fdfdff;
+
+  /* 品牌与语义色 */
+  --brand-700: #3f38c9;
+  --brand-600: #4f46e5;
+  --brand-500: #6366f1;
+  --brand-200: #c7c6f7;
+  --brand-100: #ecebfe;
+  --brand-050: #f5f4ff;
+
+  --rose-500: #e08aa4;
+  --rose-100: #fdeef2;
+  --mint-600: #1e7f63;
+  --mint-100: #e6f5ef;
+  --amber-600: #a4640a;
+  --amber-100: #fdf1dd;
+  --danger-600: #c03a4c;
+  --danger-100: #fbeaec;
+
+  /* 描边与阴影 */
+  --line: rgba(35, 37, 47, 0.08);
+  --line-strong: rgba(35, 37, 47, 0.14);
+  --shadow-sm: 0 2px 8px rgba(79, 70, 229, 0.05);
+  --shadow-md: 0 12px 28px rgba(79, 70, 229, 0.08), 0 2px 6px rgba(35, 37, 47, 0.04);
+  --shadow-lg: 0 22px 48px rgba(79, 70, 229, 0.14), 0 4px 12px rgba(35, 37, 47, 0.05);
+  --shadow-inner: inset 0 2px 6px rgba(35, 37, 47, 0.08);
+
+  /* 动效：统一节奏，且尊重系统减弱动效设置 */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 420ms;
+
+  --content: 1180px;
+  --content-wide: 1360px;
+}
+
+/* 管理台：深灰三层。同一套尺度，只换表面与文字。 */
+.admin-scope {
+  color-scheme: dark;
+
+  --adm-0: #1c1c1e;
+  --adm-1: #2c2c2e;
+  --adm-2: #3a3a3c;
+
+  --adm-screen: #161618;
+  --adm-panel: #202022;
+  --adm-card: #2a2a2c;
+  --adm-line: rgba(255, 255, 255, 0.1);
+  --adm-line-soft: rgba(255, 255, 255, 0.07);
+  --adm-line-strong: rgba(255, 255, 255, 0.16);
+
+  --adm-text: rgba(255, 255, 255, 0.94);
+  --adm-text-2: rgba(255, 255, 255, 0.72);
+  --adm-text-3: rgba(255, 255, 255, 0.48);
+
+  --adm-accent: #0a84ff;
+  --adm-accent-soft: rgba(10, 132, 255, 0.14);
+  --adm-ok: #3ddc97;
+  --adm-warn: #f0b429;
+  --adm-bad: #ff6961;
+
+  --adm-serif: 'Noto Serif SC', 'Songti SC', Georgia, 'Times New Roman', serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+  }
+}

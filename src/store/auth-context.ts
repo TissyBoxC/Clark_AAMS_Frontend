@@ -1,15 +1,18 @@
-import { createContext, useContext } from 'react';
+/* 身份状态的容器。单独存放，Provider 与读取入口各自只导出一种东西。 */
 
-import type { IAuthStoreValueType } from './auth-store';
+import { createContext } from 'react';
 
-export const AuthStoreContext = createContext<IAuthStoreValueType | null>(null);
+import type { IUserType, UserRoleType } from '../types';
 
-export function useAuthStore(): IAuthStoreValueType {
-  const context = useContext(AuthStoreContext);
-
-  if (!context) {
-    throw new Error('useAuthStore must be used within AuthProvider');
-  }
-
-  return context;
+export interface IAuthContextType {
+  user: IUserType | null;
+  role: UserRoleType;
+  displayName: string;
+  isResolved: boolean;
+  isVerified: boolean;
+  refresh: () => Promise<void>;
+  applyUser: (user: IUserType | null) => void;
+  signOut: () => Promise<void>;
 }
+
+export const AuthContext = createContext<IAuthContextType | null>(null);

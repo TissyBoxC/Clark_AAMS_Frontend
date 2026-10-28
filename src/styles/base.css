@@ -1,0 +1,180 @@
+/* 基础重置、排版与通用布局 */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--canvas);
+  color: var(--ink-700);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * 管理台把 .admin-scope 挂在 body 内部的容器上，而 body 本身仍是浅色底。
+ * 没有下面这条互补选择器时，深色界面会被浅色画布包一圈，
+ * 深色文字也会落到浅底上。让它占满整屏即可。
+ */
+body:has(.admin-scope) {
+  background: #161618;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: var(--ink-900);
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+}
+
+h3 {
+  font-size: var(--text-h3);
+}
+
+p {
+  margin: 0;
+  max-width: 68ch;
+}
+
+small {
+  font-size: var(--text-small);
+}
+
+code,
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-600);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+::selection {
+  background: var(--brand-100);
+  color: var(--ink-900);
+}
+
+/* 通用容器 */
+.shell {
+  width: 100%;
+  max-width: var(--content);
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 0.6rem + 2vw, 2rem);
+}
+
+.shell--wide {
+  max-width: var(--content-wide);
+}
+
+.section {
+  padding: clamp(3.5rem, 2.4rem + 4vw, 6rem) 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-2 { gap: var(--sp-2); }
+.gap-3 { gap: var(--sp-3); }
+.gap-4 { gap: var(--sp-4); }
+.gap-5 { gap: var(--sp-5); }
+.gap-6 { gap: var(--sp-6); }
+
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+.row--end {
+  margin-left: auto;
+}
+
+.muted {
+  color: var(--ink-500);
+}
+
+.tiny {
+  font-size: var(--text-small);
+  color: var(--ink-500);
+}
+
+.lede {
+  font-size: 1.0625rem;
+  color: var(--ink-600);
+  max-width: 56ch;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* 骨架屏 */
+.skeleton {
+  border-radius: var(--r-md);
+  background: linear-gradient(90deg, var(--surface-sunken) 25%, #fafaff 37%, var(--surface-sunken) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-slide {
+  from { background-position: 100% 50%; }
+  to { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

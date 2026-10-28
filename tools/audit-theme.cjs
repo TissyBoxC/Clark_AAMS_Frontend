@@ -10,7 +10,7 @@ const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
   });
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 1000 });
-  await page.goto('http://127.0.0.1:4174/', { waitUntil: 'networkidle2' });
+  await page.goto('https://card.clarkhub.cn/', { waitUntil: 'networkidle2' });
   await new Promise((r) => setTimeout(r, 800));
 
   const read = () =>
