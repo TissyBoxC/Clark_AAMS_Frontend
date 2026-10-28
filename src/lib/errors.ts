@@ -20,6 +20,9 @@ export function userMessageFor(error: unknown): string {
   switch (error.kind) {
     case 'offline':
       return '暂时连不上服务，请过一会儿再试。';
+    case 'credentials':
+      // 用户就站在登录框前面，直说哪里不对，不要把他推去「重新登录」。
+      return '账号或密码不正确，请再确认一次。';
     case 'auth':
       return '登录状态已失效，请重新登录。';
     case 'forbidden':
@@ -35,7 +38,7 @@ export function userMessageFor(error: unknown): string {
   }
 }
 
-/** 是否需要引导用户重新登录。 */
+/** 是否需要引导用户重新登录。凭据错误不算——用户已经在登录页了。 */
 export function needsLogin(error: unknown): boolean {
   return error instanceof ApiError && error.kind === 'auth';
 }

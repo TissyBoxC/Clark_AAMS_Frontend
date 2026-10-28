@@ -12,6 +12,8 @@ const CONFIGURED_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').trim();
 
 export type ErrorKind =
   | 'auth'
+  /** 账号或密码不正确：用户要改输入，不是要重新登录。 */
+  | 'credentials'
   | 'forbidden'
   | 'quota'
   | 'rate-limit'
@@ -65,6 +67,13 @@ function isEnvelope(value: unknown): value is IApiEnvelopeType<unknown> {
 }
 
 function classify(status: number, code: number): ErrorKind {
+  // 账号或密码不对，和「会话过期」是两回事：
+  // 前者用户正在登录页上、要改的是输入；后者用户已经登录过、要重新登录。
+  // 两者都是 401，但告诉用户的话完全不同——混在一起就会出现
+  // 「刚在登录页输错账号，却被告知登录状态已失效」这种莫名其妙的提示。
+  if (code === 40103) {
+    return 'credentials';
+  }
   if (code === 40101 || code === 40102 || status === 401) {
     return 'auth';
   }

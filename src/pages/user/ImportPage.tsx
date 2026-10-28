@@ -10,6 +10,9 @@ import { normalizeCourse, weekText } from '../../lib/schedule';
 import { saveCoursesToSchedule } from '../../lib/save-courses';
 import type { ICourseType, IImportResultType, ISchoolType } from '../../types';
 
+/** 导入扩展的下载地址。放在站点根目录，随前端一起发布。 */
+const EXTENSION_DOWNLOAD_URL = '/downloads/clark-aams-extension.zip';
+
 export default function ImportPage() {
   const { notify } = useToast();
 
@@ -194,27 +197,48 @@ export default function ImportPage() {
       </section>
 
       {school ? (
-        <section className="card">
-          <div className="card__head">
-            <div>
-              <h2 className="card__title">第二步 · 取回课表内容</h2>
-              <p className="card__sub">
-                点下面的按钮会打开 {school.name} 的登录页，用你自己的学号密码登录，
-                进到课表页后把整张课表复制下来。
-              </p>
+        <>
+          <section className="card">
+            <div className="card__head">
+              <div>
+                <h2 className="card__title">装一次扩展，以后点一下就导完</h2>
+                <p className="card__sub">
+                  装好之后，你在 {school.name} 的教务系统里打开课表页，
+                  点一下浏览器上的按钮，课表就自动整理进来了。不用复制、不用粘贴。
+                </p>
+              </div>
+              <a className="btn btn--primary btn--sm" href={EXTENSION_DOWNLOAD_URL} download>
+                下载导入扩展
+              </a>
             </div>
-            <button className="btn btn--primary btn--sm" type="button" onClick={openSchoolPage}>
-              打开{school.name}课表页
-            </button>
-          </div>
 
-          <ol className="stack gap-3" style={{ paddingLeft: '1.1rem', margin: 0, color: 'var(--ink-600)', fontSize: 'var(--text-small)' }}>
-            <li>在新窗口里登录学校系统，一直点到能看见整张课表的那一页。</li>
-            <li>在课表区域从左上角拖到右下角，复制选中的内容。</li>
-            <li>回到这里，粘贴到下面的框里，点「开始整理」。</li>
-          </ol>
+            <ol className="stack gap-3" style={{ paddingLeft: '1.1rem', margin: 0, color: 'var(--ink-600)', fontSize: 'var(--text-small)' }}>
+              <li>下载后解压，得到一个文件夹。</li>
+              <li>在 Chrome 地址栏打开 <code>chrome://extensions</code>，打开右上角「开发者模式」。</li>
+              <li>点「加载已解压的扩展程序」，选中刚才解压出来的文件夹。</li>
+              <li>打开 {school.name} 教务系统的课表页，点工具栏上的粉色图标，再点「导入现在这一页」。</li>
+            </ol>
 
-          <div style={{ marginTop: 'var(--sp-5)' }}>
+            <div className="row" style={{ marginTop: 'var(--sp-4)' }}>
+              <button className="btn btn--primary" type="button" onClick={openSchoolPage}>
+                打开{school.name}教务系统
+              </button>
+              <a className="btn btn--ghost" href={EXTENSION_DOWNLOAD_URL} download>
+                重新下载扩展
+              </a>
+            </div>
+          </section>
+
+          <section className="card">
+            <div className="card__head">
+              <div>
+                <h2 className="card__title">不想装扩展？也可以贴过来</h2>
+                <p className="card__sub">
+                  在课表页复制整张表格，粘贴到下面，效果是一样的。
+                </p>
+              </div>
+            </div>
+
             <Field
               label="课表内容"
               htmlFor="import-content"
@@ -228,21 +252,21 @@ export default function ImportPage() {
                 onChange={(event) => setPageContent(event.target.value)}
               />
             </Field>
-          </div>
 
-          <div className="row" style={{ marginTop: 'var(--sp-4)' }}>
-            <button className="btn btn--primary" type="button" disabled={isParsing} onClick={() => void handleParse()}>
-              {isParsing ? '正在整理…' : '开始整理'}
-            </button>
-            <button
-              className="btn btn--ghost"
-              type="button"
-              onClick={() => { setPageContent(''); setResult(null); setError(''); }}
-            >
-              清空重来
-            </button>
-          </div>
-        </section>
+            <div className="row" style={{ marginTop: 'var(--sp-4)' }}>
+              <button className="btn btn--primary" type="button" disabled={isParsing} onClick={() => void handleParse()}>
+                {isParsing ? '正在整理…' : '整理成课表'}
+              </button>
+              <button
+                className="btn btn--ghost"
+                type="button"
+                onClick={() => { setPageContent(''); setResult(null); setError(''); }}
+              >
+                清空重来
+              </button>
+            </div>
+          </section>
+        </>
       ) : null}
 
       {result && previewCourses.length > 0 ? (
