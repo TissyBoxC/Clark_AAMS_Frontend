@@ -8,6 +8,7 @@ import { useToast } from '../../components/useToast';
 import { userMessageFor } from '../../lib/errors';
 import { normalizeCourse, weekText } from '../../lib/schedule';
 import { saveCoursesToSchedule } from '../../lib/save-courses';
+import { useExtensionInstalled } from '../../lib/use-extension-installed';
 import type { ICourseType, IImportResultType, ISchoolType } from '../../types';
 
 /** 导入扩展的下载地址。放在站点根目录，随前端一起发布。 */
@@ -15,6 +16,7 @@ const EXTENSION_DOWNLOAD_URL = '/downloads/clark-aams-extension.zip';
 
 export default function ImportPage() {
   const { notify } = useToast();
+  const extensionState = useExtensionInstalled();
 
   const [schools, setSchools] = useState<ISchoolType[]>([]);
   const [isLoadingSchools, setIsLoadingSchools] = useState(true);
@@ -67,19 +69,25 @@ export default function ImportPage() {
       return;
     }
 
-    const popup = window.open(
-      school.login.loginUrl,
-      'clarkSchoolPage',
-      'width=1280,height=860,resizable=yes,scrollbars=yes',
-    );
-
-    if (!popup) {
-      setError('浏览器拦住了新窗口。允许弹出窗口后，再点一次按钮。');
-      return;
-    }
+    /*
+     * 用普通标签页打开，不要用 window.open 指定尺寸。
+     *
+     * 指定了 width/height 的弹窗没有地址栏和工具栏，用户在里面
+     * 找不到扩展图标——一键导入也就无从点起。普通标签页保留完整
+     * 浏览器界面，扩展按钮才在。
+     *
+     * rel="noopener" 由 <a> 承担；这里用 anchor 点击而不是 window.open，
+     * 是为了让浏览器把它当成用户主动发起的导航，不被弹窗拦截。
+     */
+    const anchor = document.createElement('a');
+    anchor.href = school.login.loginUrl;
+    anchor.target = '_blank';
+    anchor.rel = 'noopener noreferrer';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
 
     setError('');
-    popup.focus();
   }
 
   async function handleParse(): Promise<void> {
@@ -199,34 +207,62 @@ export default function ImportPage() {
       {school ? (
         <>
           <section className="card">
-            <div className="card__head">
-              <div>
-                <h2 className="card__title">装一次扩展，以后点一下就导完</h2>
-                <p className="card__sub">
-                  装好之后，你在 {school.name} 的教务系统里打开课表页，
-                  点一下浏览器上的按钮，课表就自动整理进来了。不用复制、不用粘贴。
-                </p>
-              </div>
-              <a className="btn btn--primary btn--sm" href={EXTENSION_DOWNLOAD_URL} download>
-                下载导入扩展
-              </a>
-            </div>
+            {extensionState === 'installed' ? (
+              <>
+                <div className="card__head">
+                  <div>
+                    <h2 className="card__title">扩展装好了，可以开始导入</h2>
+                    <p className="card__sub">
+                      点下面的按钮前往 {school.name} 教务系统。在那里登录、打开课表页，
+                      然后点浏览器工具栏上的粉色图标。
+                    </p>
+                  </div>
+                  <button className="btn btn--primary btn--sm" type="button" onClick={openSchoolPage}>
+                    打开{school.name}教务系统
+                  </button>
+                </div>
 
-            <ol className="stack gap-3" style={{ paddingLeft: '1.1rem', margin: 0, color: 'var(--ink-600)', fontSize: 'var(--text-small)' }}>
-              <li>下载后解压，得到一个文件夹。</li>
-              <li>在 Chrome 地址栏打开 <code>chrome://extensions</code>，打开右上角「开发者模式」。</li>
-              <li>点「加载已解压的扩展程序」，选中刚才解压出来的文件夹。</li>
-              <li>打开 {school.name} 教务系统的课表页，点工具栏上的粉色图标，再点「导入现在这一页」。</li>
-            </ol>
+                <ol className="stack gap-3" style={{ paddingLeft: '1.1rem', margin: 0, color: 'var(--ink-600)', fontSize: 'var(--text-small)' }}>
+                  <li>在教务系统里登录，一直点到能看见整张课表的那一页。</li>
+                  <li>点浏览器工具栏上的粉色图标——在地址栏右边，可能需要先点拼图图标把它固定出来。</li>
+                  <li>在弹出的窗口里点「导入现在这一页」，读完会自动放进你的课表。</li>
+                </ol>
+              </>
+            ) : (
+              <>
+                <div className="card__head">
+                  <div>
+                    <h2 className="card__title">
+                      {extensionState === 'checking' ? '正在确认扩展…' : '装一次扩展，以后点一下就导完'}
+                    </h2>
+                    <p className="card__sub">
+                      装好之后，你在 {school.name} 的教务系统里打开课表页，
+                      点一下浏览器上的按钮，课表就自动整理进来了。不用复制、不用粘贴。
+                    </p>
+                  </div>
+                  <a className="btn btn--primary btn--sm" href={EXTENSION_DOWNLOAD_URL} download>
+                    下载导入扩展
+                  </a>
+                </div>
 
-            <div className="row" style={{ marginTop: 'var(--sp-4)' }}>
-              <button className="btn btn--primary" type="button" onClick={openSchoolPage}>
-                打开{school.name}教务系统
-              </button>
-              <a className="btn btn--ghost" href={EXTENSION_DOWNLOAD_URL} download>
-                重新下载扩展
-              </a>
-            </div>
+                <ol className="stack gap-3" style={{ paddingLeft: '1.1rem', margin: 0, color: 'var(--ink-600)', fontSize: 'var(--text-small)' }}>
+                  <li>下载后解压，得到一个文件夹。</li>
+                  <li>在 Chrome 地址栏打开 <code>chrome://extensions</code>，打开右上角「开发者模式」。</li>
+                  <li>点「加载已解压的扩展程序」，选中刚才解压出来的文件夹。</li>
+                  <li>回到这一页刷新一下，提示会变成「扩展装好了」。</li>
+                  <li>打开 {school.name} 教务系统的课表页，点工具栏上的粉色图标，再点「导入现在这一页」。</li>
+                </ol>
+
+                <div className="row" style={{ marginTop: 'var(--sp-4)' }}>
+                  <button className="btn btn--primary" type="button" onClick={openSchoolPage}>
+                    先打开{school.name}教务系统
+                  </button>
+                  <a className="btn btn--ghost" href={EXTENSION_DOWNLOAD_URL} download>
+                    下载扩展
+                  </a>
+                </div>
+              </>
+            )}
           </section>
 
           <section className="card">
