@@ -118,6 +118,30 @@ export function todayLabel(date = new Date()): string {
   return `${date.getMonth() + 1} 月 ${date.getDate()} 日 · 周${WEEKDAY_SHORT[weekdayOf(date) - 1]}`;
 }
 
+/**
+ * 算出「第 week 周、周 dayOfWeek」是哪一天。
+ *
+ * @param termStart 第一周周一的日期，yyyy-MM-dd
+ * @param week      第几周，从 1 开始
+ * @param dayOfWeek 周几，1 是周一
+ * @returns 那天的 Date；termStart 缺失或格式不对时返回 null
+ */
+export function dateOfWeekDay(termStart: string, week: number, dayOfWeek: number): Date | null {
+  const start = localDate(termStart);
+  if (!start) {
+    return null;
+  }
+  // 从第一周周一起算：整周偏移 + 周内偏移
+  const offsetDays = (week - 1) * 7 + (dayOfWeek - 1);
+  const result = new Date(start.getFullYear(), start.getMonth(), start.getDate() + offsetDays);
+  return result;
+}
+
+/** 把一个日期格式化成「9 月 1 日」，用于课表表头。 */
+export function monthDayLabel(date: Date): string {
+  return `${date.getMonth() + 1}/${date.getDate()}`;
+}
+
 export function formatDateTime(value?: string): string {
   if (!value) {
     return '—';

@@ -668,6 +668,26 @@
   }
 }
 
+/* 作息时间：每节课一行，窄屏自动减列 */
+.lesson-time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: var(--sp-3);
+}
+
+.lesson-time-grid__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: var(--text-small);
+  color: var(--ink-600);
+}
+
+.lesson-time-grid__item span {
+  white-space: nowrap;
+}
+
+
 /* =========================================================
    管理员工作台（macOS 深色三层）
    ========================================================= */

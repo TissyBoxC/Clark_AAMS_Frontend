@@ -14,14 +14,18 @@ import { useConfirm } from '../../components/useConfirm';
 import { useToast } from '../../components/useToast';
 import { userMessageFor } from '../../lib/errors';
 import {
-  DEFAULT_LESSON_TIMES,
+  MAX_WEEK,
   WEEKDAY_LABELS,
+  dateOfWeekDay,
   isCourseInWeek,
   lessonRangeText,
   maxLessonOf,
+  monthDayLabel,
+  termWeek,
   weekText,
   weekdayOf,
 } from '../../lib/schedule';
+import { getLessonTimes, getTermStart } from '../../lib/term-settings';
 import type { ICourseType, ICourseDraftType } from '../../types';
 
 interface IFormStateType {
@@ -87,7 +91,33 @@ export default function SchedulePage() {
   const [courses, setCourses] = useState<ICourseType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [week, setWeek] = useState(1);
+  /*
+   * 学期设置存在本机，在设置页改。回到课表页时重读一次，
+   * 否则刚改完的起始日要刷新页面才生效。
+   */
+  const [termStart, setTermStartState] = useState<string>(() => getTermStart());
+  const [lessonTimes, setLessonTimesState] = useState<string[]>(() => getLessonTimes());
+
+  useEffect(() => {
+    function reread(): void {
+      setTermStartState(getTermStart());
+      setLessonTimesState(getLessonTimes());
+    }
+    // 从别的页面切回来
+    window.addEventListener('focus', reread);
+    // 同一页面内改完 localStorage 也能收到
+    window.addEventListener('storage', reread);
+    return () => {
+      window.removeEventListener('focus', reread);
+      window.removeEventListener('storage', reread);
+    };
+  }, []);
+  /*
+   * 默认显示今天所在的周，而不是死板地从第 1 周开始。
+   * 学期过了大半还把人按在第一周，等于每次都要手动翻。
+   * 没配第一周周一、或今天在学期之外时，termWeek 会夹到 [1, maxWeeks]。
+   */
+  const [week, setWeek] = useState(() => termWeek(getTermStart(), new Date(), MAX_WEEK));
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<IFormStateType>(EMPTY_FORM);
@@ -95,6 +125,23 @@ export default function SchedulePage() {
   const [isSaving, setIsSaving] = useState(false);
 
   const todayWeekday = weekdayOf(new Date());
+  const todayWeek = useMemo(() => termWeek(termStart, new Date(), MAX_WEEK), [termStart]);
+
+  /** 表头里每天对应的日期；没配起始日就返回 null。 */
+  function topDateOfDay(day: number): Date | null {
+    if (!termStart) {
+      return null;
+    }
+    return dateOfWeekDay(termStart, week, day);
+  }
+
+  /** 当前查看的这周，是不是今天所在的那一周。 */
+  const isCurrentWeek = todayWeek === week;
+
+  /** 这一格是不是「今天」。 */
+  function isToday(day: number): boolean {
+    return isCurrentWeek && day === todayWeekday;
+  }
 
   const maxWeeks = useMemo(() => {
     const lastWeek = courses.reduce((max, course) => Math.max(max, course.endWeek || 1), 0);
@@ -381,16 +428,21 @@ export default function SchedulePage() {
               aria-label={`第 ${week} 周课表`}
             >
               <div className="timetable__corner" style={{ gridColumn: 1, gridRow: 1 }}>节次</div>
-              {WEEKDAY_LABELS.map((label, index) => (
-                <div
-                  key={label}
-                  className="timetable__day"
-                  style={{ gridColumn: index + 2, gridRow: 1 }}
-                >
-                  <b>{label}</b>
-                  <span>{index + 1 === todayWeekday ? '今天' : ' '}</span>
-                </div>
-              ))}
+              {WEEKDAY_LABELS.map((label, index) => {
+                const day = index + 1;
+                // 配了第一周周一才能算出具体日期
+                const date = topDateOfDay(day);
+                return (
+                  <div
+                    key={label}
+                    className="timetable__day"
+                    style={{ gridColumn: index + 2, gridRow: 1 }}
+                  >
+                    <b>{label}</b>
+                    <span>{date ? monthDayLabel(date) : ' '}</span>
+                  </div>
+                );
+              })}
 
               {Array.from({ length: lessons }, (_, index) => index + 1).map((lesson) => (
                 <Fragment key={lesson}>
@@ -399,7 +451,7 @@ export default function SchedulePage() {
                     style={{ gridColumn: 1, gridRow: lesson + 1 }}
                   >
                     <b>{lesson}</b>
-                    <span>{DEFAULT_LESSON_TIMES[lesson - 1] ?? ''}</span>
+                    <span>{lessonTimes[lesson - 1] ?? ''}</span>
                   </div>
 
                   {WEEKDAY_LABELS.map((_label, dayIndex) => {
@@ -444,7 +496,9 @@ export default function SchedulePage() {
                     return (
                       <div
                         key={`${day}-${lesson}`}
-                        className={`timetable__cell ${day === todayWeekday ? 'timetable__cell--today' : ''}`}
+                        // 只有正在看本周时，那一列才算「今天」。
+                        // 翻到别的周还标今天，会让人以为那周也过这一天。
+                        className={`timetable__cell ${isToday(day) ? 'timetable__cell--today' : ''}`}
                         style={{ gridColumn: day + 1, gridRow: lesson + 1 }}
                       />
                     );

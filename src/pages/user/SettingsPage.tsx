@@ -7,10 +7,18 @@ import { Field, PageMeta } from '../../components/ui';
 import { useConfirm } from '../../components/useConfirm';
 import { useToast } from '../../components/useToast';
 import { userMessageFor } from '../../lib/errors';
+import { MAX_WEEK, termWeek } from '../../lib/schedule';
 import { copyText } from '../../lib/storage';
+import {
+  getLessonTimes,
+  getTermStart,
+  resetLessonTimes,
+  setLessonTimes,
+  setTermStart,
+} from '../../lib/term-settings';
 import { useAuth } from '../../store/useAuth';
 
-type SettingsTab = 'profile' | 'email' | 'security';
+type SettingsTab = 'profile' | 'email' | 'term' | 'security';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -27,6 +35,29 @@ export default function SettingsPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
   const [error, setError] = useState('');
+
+  /*
+   * 学期设置存在本机，不进账号。这两项只影响"课表怎么显示"，
+   * 不影响账号本身，也没有必要上传。
+   */
+  const [termStartInput, setTermStartInput] = useState(() => getTermStart());
+  const [lessonTimesInput, setLessonTimesInput] = useState<string[]>(() => getLessonTimes());
+
+  function handleSaveTerm(): void {
+    setTermStart(termStartInput);
+    setLessonTimes(lessonTimesInput);
+    notify('学期设置已保存', 'success');
+  }
+
+  function handleResetLessonTimes(): void {
+    resetLessonTimes();
+    setLessonTimesInput(getLessonTimes());
+    notify('上课时间已恢复默认', 'success');
+  }
+
+  function handleChangeLessonTime(index: number, value: string): void {
+    setLessonTimesInput((prev) => prev.map((item, i) => (i === index ? value : item)));
+  }
 
   async function handleCopyCode(): Promise<void> {
     if (!user?.loginCode) {
@@ -148,6 +179,9 @@ export default function SettingsPage() {
           <button type="button" aria-selected={tab === 'email'} onClick={() => setTab('email')}>
             邮箱
           </button>
+          <button type="button" aria-selected={tab === 'term'} onClick={() => setTab('term')}>
+            学期与作息
+          </button>
           <button type="button" aria-selected={tab === 'security'} onClick={() => setTab('security')}>
             登录码与安全
           </button>
@@ -247,6 +281,78 @@ export default function SettingsPage() {
                 </div>
               </div>
             </section>
+          ) : null}
+
+          {tab === 'term' ? (
+            <>
+              <section className="card">
+                <div className="card__head">
+                  <div>
+                    <h2 className="card__title">第一周从哪天开始</h2>
+                    <p className="card__sub">
+                      填这学期第一周周一的日期。填好之后，课表会自己算出现在是第几周，
+                      每天的表头上也会显示出具体日期。
+                    </p>
+                  </div>
+                </div>
+
+                <Field
+                  label="第一周周一"
+                  htmlFor="term-start"
+                  hint={termStartInput ? '' : '不填也能用，课表就固定从第 1 周开始显示。'}
+                >
+                  <input
+                    id="term-start"
+                    className="input"
+                    type="date"
+                    value={termStartInput}
+                    onChange={(event) => setTermStartInput(event.target.value)}
+                  />
+                </Field>
+
+                {termStartInput ? (
+                  <p className="muted" style={{ marginTop: 'var(--sp-3)' }}>
+                    按这个日期算，今天是第 {termWeek(termStartInput, new Date(), MAX_WEEK)} 周。
+                  </p>
+                ) : null}
+              </section>
+
+              <section className="card">
+                <div className="card__head">
+                  <div>
+                    <h2 className="card__title">每节课几点开始</h2>
+                    <p className="card__sub">
+                      课表左边那列显示的时间。按你们学校的作息改就行，
+                      改完记得点下面的保存。
+                    </p>
+                  </div>
+                  <button className="btn btn--ghost btn--sm" type="button" onClick={handleResetLessonTimes}>
+                    恢复默认
+                  </button>
+                </div>
+
+                <div className="lesson-time-grid">
+                  {lessonTimesInput.map((time, index) => (
+                    <label key={index} className="lesson-time-grid__item">
+                      <span>第 {index + 1} 节</span>
+                      <input
+                        className="input"
+                        type="time"
+                        value={time}
+                        aria-label={`第 ${index + 1} 节的开始时间`}
+                        onChange={(event) => handleChangeLessonTime(index, event.target.value)}
+                      />
+                    </label>
+                  ))}
+                </div>
+
+                <div className="row" style={{ marginTop: 'var(--sp-5)' }}>
+                  <button className="btn btn--primary" type="button" onClick={handleSaveTerm}>
+                    保存学期设置
+                  </button>
+                </div>
+              </section>
+            </>
           ) : null}
 
           {tab === 'security' ? (
